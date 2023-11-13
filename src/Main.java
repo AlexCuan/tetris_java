@@ -220,9 +220,29 @@ public class Main {
         return counter;
     }
 
-    static void shitfDown() {
-        // Count the number of columns with 1s in the piece
-        int counter = 0;
+    static int [] countSpacesDown(){
+        int [] spacesDown = new int [fullnesOfPiece()];
+        for (int i = spaces_left; i < spacesDown.length + spaces_left; i++) {
+            for (int j = 3; j < board.length; j++) {
+                if (board[j][i] == 0){
+                    spacesDown[i - spaces_left] =+ 1;
+                }
+            }
+        }
+        return spacesDown;
+    }
+
+//    static void shitfDown() {
+//        // Shift the piece down the minimum number of countSpacesDown
+//        int [] spacesDown = countSpacesDown();
+//        int min = Arrays.stream(spacesDown).min().getAsInt();
+//        for (int i = spaces_left; i < spacesDown.length + spaces_left; i++) {
+//            for (int j = 0; j < min; j++) {
+//                board[j][i] = ;
+//
+//            }
+//        }
+
 
     }
 
