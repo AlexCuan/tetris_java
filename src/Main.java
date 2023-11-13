@@ -22,7 +22,7 @@ public class Main {
 
     public static void main(String[] args) {
         generate_piece();
-        place_piece(0);
+        placeStagingPiece(0);
         print_board();
         updateSpacesLeft();
         while (true) {
@@ -77,7 +77,8 @@ public class Main {
         piece = pieces[random_number];
     }
 
-    private static void place_piece(int added_spaces) {
+
+    private static void placeStagingPiece(int added_spaces) {
         // sum all the values in the piece array to the board array. Take into account the spaces_left and spaces_right
         spaces_left += added_spaces;
         clearBoard();
@@ -147,19 +148,19 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input.equalsIgnoreCase("a") && spaces_left > 0) {
-            place_piece(-1);
+            placeStagingPiece(-1);
         } else if (input.equalsIgnoreCase("d") && spaces_right > 0) {
-            place_piece(1);
+            placeStagingPiece(1);
         } else if (input.equalsIgnoreCase("w")) {
             rotate();
         } else if (input.equalsIgnoreCase("s")) {
-            place_piece(1);
+            placeStagingPiece(1);
         } else if (input.equalsIgnoreCase("r")) {
             rotate();
             if (pieceOutOfBounds) {
                 readjustPiece();
             } else {
-                place_piece(0);
+                placeStagingPiece(0);
 
             }
         }
@@ -203,7 +204,7 @@ public class Main {
     static void readjustPiece() {
         clearBoard();
         pieceOutOfBounds = false;
-        place_piece(-1);
+        placeStagingPiece(-1);
 
     }
 
