@@ -174,7 +174,7 @@ public class Main {
 
 
     static void updateSpacesLeft() {
-        int counter = board.length -1 ;
+        int counter = board.length - 1;
         // Iterate over the 3 first lines of the board and save the position of the first 1 from left to right
         // taking into account the thre columns
         for (int i = 0; i < 3; i++) {
@@ -205,6 +205,24 @@ public class Main {
         clearBoard();
         pieceOutOfBounds = false;
         placeStagingPiece(-1);
+
+    }
+
+    static int fullnesOfPiece() {
+        // Count the number of columns with 1s in the piece
+        int counter = 0;
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[i].length; j++) {
+                if (piece[i][j] == 1 && j > counter)
+                    counter = j;
+            }
+        }
+        return counter;
+    }
+
+    static void shitfDown() {
+        // Count the number of columns with 1s in the piece
+        int counter = 0;
 
     }
 
