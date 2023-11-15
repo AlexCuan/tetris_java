@@ -14,6 +14,7 @@ public class Main {
     private static boolean rotated = false;
 
     private static int[][] board = new int[11][8];
+    private static int[][] stagingBoard = new int[3][8];
 
     private static int[][] piece;
 
@@ -23,12 +24,17 @@ public class Main {
     public static void main(String[] args) {
         generate_piece();
         placeStagingPiece(0);
-        print_board();
+        print_board(stagingBoard);
+        print_board(board);
         updateSpacesLeft();
         while (true) {
             userMovement();
             print_board();
             updateSpacesRight();
+            printPiece();
+            print_board(stagingBoard);
+            print_board(board);
+
             System.out.println("Spaces right: " + spaces_right);
             System.out.println("Spaces left: " + spaces_left);
             System.out.println("Piece out of bounds: " + pieceOutOfBounds);
@@ -85,7 +91,12 @@ public class Main {
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[i].length; j++) {
                 try {
-                    board[i][j + spaces_left] += piece[i][j];
+                    if (piece[i][j] == 1) {
+                        stagingBoard[i][j + spaces_left + added_spaces] = piece[i][j];
+                    }
+
+                    pieceOutOfBounds = false;
+
                 } catch (Exception ignored) {
                     pieceOutOfBounds = true;
                 }
@@ -94,7 +105,7 @@ public class Main {
 
     }
 
-    private static void print_board() {
+    private static void print_board(int board[][]) {
         for (int i = 0; i < board.length; i++) {
             // Replace 1 with *, and 0 with -
             for (int j = 0; j < board[i].length; j++) {
@@ -139,8 +150,8 @@ public class Main {
     }
 
     static void clearBoard() {
-        for (int i = 0; i < board.length; i++) {
-            Arrays.fill(board[i], 0);
+        for (int i = 0; i < stagingBoard.length; i++) {
+            Arrays.fill(stagingBoard[i], 0);
         }
     }
 
@@ -174,12 +185,12 @@ public class Main {
 
 
     static void updateSpacesLeft() {
-        int counter = board.length - 1;
+        int counter = stagingBoard[0].length - 1;
         // Iterate over the 3 first lines of the board and save the position of the first 1 from left to right
         // taking into account the thre columns
         for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < board[i].length; j++) {
-                if (board[i][j] == 1 && j < counter) {
+            for (int j = 0; j < stagingBoard[i].length; j++) {
+                if (stagingBoard[i][j] == 1 && j < counter) {
                     counter = j;
                 }
             }
@@ -192,13 +203,13 @@ public class Main {
         // Iterate over the 3 first lines of the board and save the position of the first 1 from right to left
         // taking into account the thre columns
         for (int i = 0; i < 3; i++) {
-            for (int j = board[i].length - 1; j >= 0; j--) {
-                if (board[i][j] == 1 && j > counter) {
+            for (int j = stagingBoard[i].length - 1; j >= 0; j--) {
+                if (stagingBoard[i][j] == 1 && j > counter) {
                     counter = j;
                 }
             }
         }
-        spaces_right = board[1].length - 1 - counter;
+        spaces_right = stagingBoard[1].length - 1 - counter;
     }
 
     static void readjustPiece() {
