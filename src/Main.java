@@ -27,6 +27,7 @@ public class Main {
         print_board(stagingBoard);
         print_board(board);
         updateSpacesLeft();
+        updateSpacesRight();
         while (true) {
             userMovement();
             print_board();
@@ -195,7 +196,7 @@ public class Main {
                 }
             }
         }
-
+        spaces_left = counter;
     }
 
     static void updateSpacesRight() {
