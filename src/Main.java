@@ -253,18 +253,96 @@ public class Main {
         return spacesDown;
     }
 
-//    static void shitfDown() {
-//        // Shift the piece down the minimum number of countSpacesDown
-//        int [] spacesDown = countSpacesDown();
-//        int min = Arrays.stream(spacesDown).min().getAsInt();
-//        for (int i = spaces_left; i < spacesDown.length + spaces_left; i++) {
-//            for (int j = 0; j < min; j++) {
-//                board[j][i] = ;
-//
-//            }
-//        }
+    static int pieceSpacesDown() {
+        // In the real world, this function is anecdotal if you don't want to add an extra piece
+        // But if you want to add an extra piece, this function is crucial to know how many spaces
+        // the piece can go down
 
-
+        int minSpaceDown = 0;
+        boolean stop = false;
+        for (int i = piece.length - 1; i >= 0; i--) {
+            for (int j = 0; j < piece[0].length; j++) {
+                if (piece[i][j] == 1 && piece.length - i + 1 <= minSpaceDown) {
+                    minSpaceDown += piece.length - i + 1;
+                } else {
+                    stop = true;
+                    break;
+                }
+            }
+        }
+        return minSpaceDown;
     }
 
+    static void PlacePieceBoardBig(int[][] board, int[][] piece, int from) {
+        int xIterations = 0;
+        int pieceLength = piece.length - 1;
+
+        for (int i = from - pieceLength; i <= from; i++) {
+
+            int yIterations = 0;
+            for (int j = spaces_left; j < spaces_left + fullnesOfPiece() + 1; j++) {
+                board[i][j] += piece[xIterations][yIterations];
+
+                yIterations++;
+            }
+            xIterations++;
+
+        }
+    }
+
+    static void moveDown() {
+    }
+
+    static int[] onesPositionAtTheBottom() {
+        // Iterate over the bottom row of the piece and save the position of the 1s
+        // from left to right
+        int[] onesPosition = new int[fullnesOfPiece() + 1];
+        for (int i = 0; i < onesPosition.length; i++) {
+            if (piece[piece.length - 1][i] == 1) {
+                onesPosition[i] = 1;
+            }
+        }
+        return onesPosition;
+    }
+
+    static boolean checkIfPieceCanMoveDown(int nextRow) {
+        // Iterate over the bottom row of the piece and check if the position of the 1s
+        // from left to right is empty in the board
+        boolean canMoveDown = true;
+        int[] onesPosition = onesPositionAtTheBottom();
+        for (int i = 0; i < onesPosition.length; i++) {
+            if (board[nextRow][spaces_left + i] == 1 && onesPosition[i] == 1) {
+                System.out.println("Can't move down");
+                canMoveDown = false;
+                break;
+            }
+        }
+        return canMoveDown;
+    }
+
+
+    static void movePieceDown(int nextRow) {
+        {
+            try {
+                if (checkIfPieceCanMoveDown(nextRow)) {
+                    // catch input
+                    Scanner scanner = new Scanner(System.in);
+                    String input = scanner.nextLine();
+                    if (input.equalsIgnoreCase("s")) {
+                        for (int i = nextRow; i > nextRow - piece.length; i--) {
+                            for (int j = spaces_left; j < spaces_left + fullnesOfPiece() + 1; j++) {
+                                board[i][j] = board[i - 1][j];
+                                board[i - 1][j] = 0;
+                            }
+                        }
+                    }
+                    print_board(stagingBoard);
+                    print_board(board);
+                    movePieceDown(nextRow + 1);
+                }
+            } catch (Exception ignored) {
+            }
+
+        }
+    }
 }
