@@ -144,32 +144,13 @@ public class Main {
     }
 
     public static void rotate() {
-        int rows = piece.length;
-        int column = piece[0].length;
-
-        // Crear una nueva matriz para almacenar la transpuesta
-        int[][] rotatedMatrix = new int[column][rows];
-
-        if (!rotated) {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < column; j++) {
-                    rotatedMatrix[i][j] = piece[rows - j - 1][i];
-                }
-            }
-            rotated = true;
-
-        } else {
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < column; j++) {
-                    rotatedMatrix[i][j] = piece[j][rows - i - 1];
-                }
-            }
+        if (rotated) {
             rotated = false;
-
+            piece = bundleOfPieces[0];
+        } else {
+            rotated = true;
+            piece = bundleOfPieces[1];
         }
-
-
-        piece = rotatedMatrix;
     }
 
     static void clearBoard() {
