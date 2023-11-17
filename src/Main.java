@@ -153,9 +153,10 @@ public class Main {
         }
     }
 
-    static void clearBoard() {
-        for (int i = 0; i < stagingBoard.length; i++) {
-            Arrays.fill(stagingBoard[i], 0);
+    static void clearBoard(int[][] usedBoard) {
+        // Iterate over the board and set all the values to 0
+        for (int i = 0; i < usedBoard.length; i++) {
+            Arrays.fill(usedBoard[i], 0);
         }
     }
 
