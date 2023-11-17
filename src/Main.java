@@ -16,6 +16,7 @@ public class Main {
     private static int[][] board = new int[8][8];
     private static int[][] stagingBoard = new int[3][8];
 
+    private static int[][][] bundleOfPieces;
     private static int[][] piece;
 
     private static boolean pieceOutOfBounds = false;
@@ -58,34 +59,39 @@ public class Main {
         // *
         // *
         int[][] piece_1 = {{1, 0, 0}, {1, 0, 0}, {1, 0, 0}};
+        int[][] piece_1_rotated = {{0, 0, 0}, {0, 0, 0}, {1, 1, 1}};
 
         //
         // *
         // * * *
         int[][] piece_2 = {{0, 0, 0}, {1, 0, 0}, {1, 1, 1}};
+        int[][] piece_2_rotated = {{0, 1, 0}, {0, 1, 0}, {1, 1, 0}};
 
         //
         //     *
         // * * *
         int[][] piece_3 = {{0, 0, 0}, {0, 0, 1}, {1, 1, 1}};
+        int[][] piece_3_rotated = {{1, 1, 0}, {0, 1, 0}, {0, 1, 0}};
 
         //
         //   *
         // * * *
         int[][] piece_4 = {{0, 0, 0}, {0, 1, 0}, {1, 1, 1}};
+        int[][] piece_4_rotated = {{0, 1, 0}, {1, 1, 0}, {0, 1, 0}};
 
         //
         //   * *
         // * *
         int[][] piece_5 = {{0, 0, 0}, {0, 1, 1}, {1, 1, 0}};
+        int[][] piece_5_rotated = {{1, 0, 0}, {1, 1, 0}, {0, 1, 0}};
 
         //
         // * *
         // * *
-        int[][] piece_6 = {{1, 1}, {1, 1}};
+        int[][] piece_6 = {{0, 0, 0}, {1, 1, 0}, {1, 1, 0}};
 
         // create array of int [][] pieces
-        int[][][] pieces = {piece_1, piece_2, piece_3, piece_4, piece_5, piece_6};
+        int[][][][] pieces = {{piece_1, piece_1_rotated}, {piece_2, piece_2_rotated}, {piece_3, piece_3_rotated}, {piece_4, piece_4_rotated}, {piece_5, piece_5_rotated}, {piece_6}};
 
         // generate random number between 0 and 5
         int random_number = (int) (Math.random() * 6);
