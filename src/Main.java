@@ -236,12 +236,17 @@ public class Main {
         return counter;
     }
 
-    static int [] countSpacesDown(){
-        int [] spacesDown = new int [fullnesOfPiece()];
-        for (int i = spaces_left; i < spacesDown.length + spaces_left; i++) {
-            for (int j = 3; j < board.length; j++) {
-                if (board[j][i] == 0){
-                    spacesDown[i - spaces_left] =+ 1;
+    static int[] countSpacesDown() {
+        int[] spacesDown = new int[fullnesOfPiece() + 1];
+        for (int j = spaces_left; j < spacesDown.length + spaces_left; j++) {
+
+            for (int i = 0; i < board.length; i++) {
+
+                if (board[i][j] == 0) {
+                    spacesDown[j - spaces_left] += 1;
+                }
+                if (board[i][j] == 1) {
+                    break;
                 }
             }
         }
