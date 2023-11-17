@@ -13,7 +13,7 @@ public class Main {
     //TODO: update spaces_right everytime a piece is placed in the board
     private static boolean rotated = false;
 
-    private static int[][] board = new int[11][8];
+    private static int[][] board = new int[8][8];
     private static int[][] stagingBoard = new int[3][8];
 
     private static int[][] piece;
