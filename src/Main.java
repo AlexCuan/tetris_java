@@ -107,9 +107,10 @@ public class Main {
 
 
     private static void placeStagingPiece(int added_spaces) {
-        // sum all the values in the piece array to the board array. Take into account the spaces_left and spaces_right
-        spaces_left += added_spaces;
-        clearBoard();
+        // Iterate over the stagging board and place the piece in the correct position
+        // Sum the added spaces to the left_spaces and place the piece in "j" column + added_spaces
+        // E.g: if added_spaces = 1, start placing the piece in the "j + 1 + left_spaces" column
+        clearBoard(stagingBoard);
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[i].length; j++) {
                 try {
