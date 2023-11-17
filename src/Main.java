@@ -99,6 +99,12 @@ public class Main {
         piece = pieces[random_number];
     }
 
+    private static void generateAndPlacePiece() {
+        generate_piece();
+        piece = bundleOfPieces[0];
+        placeStagingPiece(0);
+    }
+
 
     private static void placeStagingPiece(int added_spaces) {
         // sum all the values in the piece array to the board array. Take into account the spaces_left and spaces_right
