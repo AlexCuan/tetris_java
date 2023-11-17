@@ -22,24 +22,33 @@ public class Main {
 
 
     public static void main(String[] args) {
-        generate_piece();
-        placeStagingPiece(0);
-        print_board(stagingBoard);
-        print_board(board);
-        updateSpacesLeft();
-        updateSpacesRight();
+        generateAndPlacePiece();
         while (true) {
-            userMovement();
-            print_board();
+            updateSpacesLeft();
             updateSpacesRight();
-            printPiece();
             print_board(stagingBoard);
             print_board(board);
-
-            System.out.println("Spaces right: " + spaces_right);
-            System.out.println("Spaces left: " + spaces_left);
-            System.out.println("Piece out of bounds: " + pieceOutOfBounds);
+            userMovement();
         }
+//        generate_piece();
+//        piece = bundleOfPieces[0];
+//        placeStagingPiece(0);
+//        print_board(stagingBoard);
+//        print_board(board);
+//        updateSpacesLeft();
+//        updateSpacesRight();
+//        while (true) {
+//            userMovement();
+//            updateSpacesLeft();
+//            updateSpacesRight();
+//            print_board(stagingBoard);
+//            print_board(board);
+//
+//            System.out.println("Spaces right: " + spaces_right);
+//            System.out.println("Spaces left: " + spaces_left);
+//            System.out.println("Piece out of bounds: " + pieceOutOfBounds);
+////            System.out.println("Spaces down: " + Arrays.toString(countSpacesDown()));
+//        }
 
 
     }
