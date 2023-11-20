@@ -10,6 +10,8 @@ public class Main {
     private static int spaces_left = 0;
     private static int spaces_right = 0;
 
+    private static int xPosition = 0;
+    private static int yPosition = 0;
     //TODO: update spaces_right everytime a piece is placed in the board
     private static boolean rotated = false;
 
@@ -291,7 +293,10 @@ public class Main {
         }
     }
 
-    static void moveDown() {
+    static void setCoords(int x, int y) {
+        xPosition = x;
+        yPosition = y;
+
     }
 
     static int[] onesPositionAtTheBottom() {
