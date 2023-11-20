@@ -96,7 +96,8 @@ public class Main {
         // generate random number between 0 and 5
         int random_number = (int) (Math.random() * 6);
 
-        piece = pieces[random_number];
+        bundleOfPieces = pieces[random_number];
+//        bundleOfPieces = pieces[3];
     }
 
     private static void generateAndPlacePiece() {
