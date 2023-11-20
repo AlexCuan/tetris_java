@@ -27,11 +27,13 @@ public class Main {
     public static void main(String[] args) {
         generateAndPlacePiece();
         while (true) {
+            clearConsole();
             updateSpacesLeft();
             updateSpacesRight();
             print_board(stagingBoard);
             print_board(board);
             userMovement();
+            System.out.println(xPosition + " " + yPosition);
         }
 //        generate_piece();
 //        piece = bundleOfPieces[0];
@@ -105,7 +107,9 @@ public class Main {
     private static void generateAndPlacePiece() {
         generate_piece();
         piece = bundleOfPieces[0];
+        setArbitrarySpacesLeft(0);
         placeStagingPiece(0);
+        setCoords(0, 0);
     }
 
 
@@ -132,8 +136,11 @@ public class Main {
     }
 
     private static void print_board(int board[][]) {
+
+        // Iterate over the board and print it
+
         for (int i = 0; i < board.length; i++) {
-            // Replace 1 with *, and 0 with -
+            // Replace 1 with ◼, and 0 with -
             for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] == 1) {
                     System.out.print(" ◼ ");
@@ -173,29 +180,38 @@ public class Main {
         } else if (input.equalsIgnoreCase("w")) {
             rotate();
         } else if (input.equalsIgnoreCase("s")) {
-            placeStagingPiece(1);
+            clearBoard(stagingBoard);
+            PlacePieceBoardBig(board, piece, 2);
+            clearConsole();
+            print_board(stagingBoard);
+            print_board(board);
+//            movePieceRightOnBigBoard();
+            movePieceDown();
+            generateAndPlacePiece();
         } else if (input.equalsIgnoreCase("r")) {
             rotate();
+            placeStagingPiece(0);
+
             if (pieceOutOfBounds) {
                 readjustPiece();
-            } else {
-                placeStagingPiece(0);
-
             }
+        } else if (input.equalsIgnoreCase("q")) {
+            PlacePieceBoardBig(board, piece, Arrays.stream(countSpacesDown()).min().getAsInt() - 1);
         }
     }
 
 
     static void clearConsole() {
+        // Clear the console using ANSI escape codes
         System.out.print("\033[H\033[2J");
         System.out.flush();
     }
 
 
     static void updateSpacesLeft() {
-        int counter = stagingBoard[0].length - 1;
         // Iterate over the 3 first lines of the board and save the position of the first 1 from left to right
-        // taking into account the thre columns
+
+        int counter = stagingBoard[0].length - 1;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < stagingBoard[i].length; j++) {
                 if (stagingBoard[i][j] == 1 && j < counter) {
@@ -207,9 +223,10 @@ public class Main {
     }
 
     static void updateSpacesRight() {
-        int counter = 0;
         // Iterate over the 3 first lines of the board and save the position of the first 1 from right to left
-        // taking into account the thre columns
+
+
+        int counter = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = stagingBoard[i].length - 1; j >= 0; j--) {
                 if (stagingBoard[i][j] == 1 && j > counter) {
@@ -221,7 +238,7 @@ public class Main {
     }
 
     static void readjustPiece() {
-        clearBoard();
+        clearBoard(stagingBoard);
         pieceOutOfBounds = false;
         placeStagingPiece(-1);
 
@@ -285,6 +302,7 @@ public class Main {
             int yIterations = 0;
             for (int j = spaces_left; j < spaces_left + fullnesOfPiece() + 1; j++) {
                 board[i][j] += piece[xIterations][yIterations];
+                setCoords(i, j);
 
                 yIterations++;
             }
@@ -311,13 +329,27 @@ public class Main {
         return onesPosition;
     }
 
-    static boolean checkIfPieceCanMoveDown(int nextRow) {
+    static int[] onesPositionAtTheRight() {
+        // Iterate over the right column of the piece and save the position of the 1s
+        // from top to bottom
+        int[] onesPosition = new int[piece.length];
+        int lastColumn = fullnesOfPiece();
+        for (int i = 0; i < onesPosition.length; i++) {
+            if (piece[i][lastColumn] == 1) {
+                onesPosition[i] = 1;
+            }
+        }
+        return onesPosition;
+    }
+
+    static boolean checkIfPieceCanMoveDown() {
         // Iterate over the bottom row of the piece and check if the position of the 1s
         // from left to right is empty in the board
         boolean canMoveDown = true;
         int[] onesPosition = onesPositionAtTheBottom();
         for (int i = 0; i < onesPosition.length; i++) {
-            if (board[nextRow][spaces_left + i] == 1 && onesPosition[i] == 1) {
+            // Can work instead of (spaces_left + i), (yPosition - fullnesOfPiece() + i)
+            if (board[xPosition + 1][spaces_left + i] == 1 && onesPosition[i] == 1) {
                 System.out.println("Can't move down");
                 canMoveDown = false;
                 break;
@@ -326,29 +358,86 @@ public class Main {
         return canMoveDown;
     }
 
+    static boolean checkIfPieceCanMoveRight() {
+        // Iterate over the right column of the piece and check if the position of the 1s
+        // from top to bottom is empty in the board
+        boolean canMoveRight = true;
+        int[] onesPosition = onesPositionAtTheRight();
+        for (int i = 0; i < onesPosition.length; i++) {
+            if (board[xPosition - i][yPosition + 1] == 1 && onesPosition[i] == 1) {
+                System.out.println("Can't move right");
+                canMoveRight = false;
+                break;
+            }
+        }
+        return canMoveRight;
+    }
 
-    static void movePieceDown(int nextRow) {
+
+    static void movePieceDown() {
         {
             try {
-                if (checkIfPieceCanMoveDown(nextRow)) {
+                if (checkIfPieceCanMoveDown()) {
                     // catch input
                     Scanner scanner = new Scanner(System.in);
                     String input = scanner.nextLine();
+                    int nextRow = xPosition + 1;
                     if (input.equalsIgnoreCase("s")) {
                         for (int i = nextRow; i > nextRow - piece.length; i--) {
                             for (int j = spaces_left; j < spaces_left + fullnesOfPiece() + 1; j++) {
-                                board[i][j] = board[i - 1][j];
+                                board[i][j] += board[i - 1][j];
+                                //TODO: if previous position is 1, is wrong to set it 0
+//                               if (board[i - 1][j] == 1)
                                 board[i - 1][j] = 0;
                             }
                         }
                     }
+                    clearConsole();
                     print_board(stagingBoard);
                     print_board(board);
-                    movePieceDown(nextRow + 1);
+                    xPosition += 1;
+                    movePieceDown();
+
                 }
             } catch (Exception ignored) {
             }
 
         }
     }
+
+    static void movePieceRightOnBigBoard() {
+        try {
+            if (checkIfPieceCanMoveRight()) {
+                // catch input
+                Scanner scanner = new Scanner(System.in);
+                String input = scanner.nextLine();
+                int nextColumn = yPosition + 1;
+                if (input.equalsIgnoreCase("d")) {
+                    // +1 because the xPosition is 0 indexed
+                    for (int i = xPosition; i > xPosition - piece.length + 1; i--) {
+                        for (int j = nextColumn; j >= nextColumn - fullnesOfPiece(); j--) {
+                            board[i][j] += board[i][j - 1];
+                            board[i][j - 1] = 0;
+                            System.out.println("Hey there");
+                        }
+                    }
+                }
+                print_board(stagingBoard);
+                print_board(board);
+                yPosition += 1;
+                movePieceRightOnBigBoard();
+
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    static void setArbitrarySpacesLeft(int spaces) {
+        spaces_left = spaces;
+    }
 }
+
+
+
+
+
