@@ -345,24 +345,27 @@ public class Main {
     static boolean checkIfPieceCanMoveDown() {
         // Iterate over the bottom row of the piece and check if the position of the 1s
         // from left to right is empty in the board
+
+
         boolean canMoveDown = true;
-//        int nextPieceRow = piece.length - 1;
-//        int[] onesPosition = onesPosition(nextPieceRow);
+
         for (int j = 0; j < fullnesOfPiece() + 1; j++) {
+
             int nextBoardRow = xPosition + 1;
 
             for (int i = piece.length - 1; i >= lastRowToCheck(); i--) {
 
                 if (board[nextBoardRow][yPosition - fullnesOfPiece() + j] == 1 && piece[i][j] == 1) {
                     // I'm not proud of this, but it works
-                    try{
-                        if (piece[i + 1][j] != 1){
-                            System.out.println("Can't move down");
-                            return false;
-                        }
-                    } catch (Exception ignored) {
-                    }
 
+                    if (i == 2) {
+                        System.out.println("Can't move down");
+                        return false;
+                    }
+                    if (piece[i + 1][j] != 1) {
+                        System.out.println("Can't move down");
+                        return false;
+                    }
                 }
                 nextBoardRow--;
             }
