@@ -346,14 +346,28 @@ public class Main {
         // Iterate over the bottom row of the piece and check if the position of the 1s
         // from left to right is empty in the board
         boolean canMoveDown = true;
-        int[] onesPosition = onesPositionAtTheBottom();
-        for (int i = 0; i < onesPosition.length; i++) {
-            // Can work instead of (spaces_left + i), (yPosition - fullnesOfPiece() + i)
-            if (board[xPosition + 1][spaces_left + i] == 1 && onesPosition[i] == 1) {
-                System.out.println("Can't move down");
-                canMoveDown = false;
-                break;
+//        int nextPieceRow = piece.length - 1;
+//        int[] onesPosition = onesPosition(nextPieceRow);
+        for (int j = 0; j < fullnesOfPiece() + 1; j++) {
+            int nextBoardRow = xPosition + 1;
+
+            for (int i = piece.length - 1; i >= lastRowToCheck(); i--) {
+
+                if (board[nextBoardRow][yPosition - fullnesOfPiece() + j] == 1 && piece[i][j] == 1) {
+                    // I'm not proud of this, but it works
+                    try{
+                        if (piece[i + 1][j] != 1){
+                            System.out.println("Can't move down");
+                            return false;
+                        }
+                    } catch (Exception ignored) {
+                    }
+
+                }
+                nextBoardRow--;
             }
+
+
         }
         return canMoveDown;
     }
