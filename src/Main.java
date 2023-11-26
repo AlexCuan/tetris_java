@@ -459,6 +459,27 @@ public class Main {
     static void setArbitrarySpacesLeft(int spaces) {
         spaces_left = spaces;
     }
+
+
+    private static int lastRowToCheck() {
+        // Iterate from below to above and check if the row is full. If it is, return the row number. Iterate
+        // only from 0 to fullnesOfPiece() + 1
+        int lastRowToCheck = 2;
+        for (int j = piece.length - 1; j >= 0; j--) {
+            boolean isFull = true;
+            for (int i = 0; i < fullnesOfPiece() + 1; i++) {
+
+                if (piece[j][i] == 0) {
+                    lastRowToCheck -= 1;
+                    isFull = false;
+                }
+            }
+            if (isFull) {
+                break;
+            }
+        }
+        return lastRowToCheck;
+    }
 }
 
 
