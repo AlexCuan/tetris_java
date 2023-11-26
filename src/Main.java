@@ -317,12 +317,12 @@ public class Main {
 
     }
 
-    static int[] onesPositionAtTheBottom() {
+    static int[] onesPosition(int row) {
         // Iterate over the bottom row of the piece and save the position of the 1s
         // from left to right
         int[] onesPosition = new int[fullnesOfPiece() + 1];
         for (int i = 0; i < onesPosition.length; i++) {
-            if (piece[piece.length - 1][i] == 1) {
+            if (piece[row][i] == 1) {
                 onesPosition[i] = 1;
             }
         }
