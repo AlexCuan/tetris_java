@@ -396,14 +396,24 @@ public class Main {
                     Scanner scanner = new Scanner(System.in);
                     String input = scanner.nextLine();
                     int nextRow = xPosition + 1;
+                    int xIterations = piece.length - 1;
                     if (input.equalsIgnoreCase("s")) {
                         for (int i = nextRow; i > nextRow - piece.length; i--) {
+                            int yIterations = 0;
+
                             for (int j = spaces_left; j < spaces_left + fullnesOfPiece() + 1; j++) {
-                                board[i][j] += board[i - 1][j];
+                                // Displace only the 1s and check the next block isn't a 1
+                                if (board[i][j] == 0 && piece[xIterations][yIterations] == 1) {
+                                    board[i][j] = piece[xIterations][yIterations];
+                                    board[i - 1][j] = 0;
+
+
+                                }
                                 //TODO: if previous position is 1, is wrong to set it 0
 //                               if (board[i - 1][j] == 1)
-                                board[i - 1][j] = 0;
+                                yIterations++;
                             }
+                            xIterations--;
                         }
                     }
                     clearConsole();
