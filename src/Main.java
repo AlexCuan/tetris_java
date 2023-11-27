@@ -474,28 +474,35 @@ public class Main {
         }
     }
 
-    static void movePieceRightOnBigBoard() {
+    static void movepiecerightonbigboard() {
         try {
             if (checkIfPieceCanMoveRight()) {
                 // catch input
-                Scanner scanner = new Scanner(System.in);
-                String input = scanner.nextLine();
+                System.out.println("Can move right");
+
+                int xIterations = piece.length - 1;
                 int nextColumn = yPosition + 1;
-                if (input.equalsIgnoreCase("d")) {
-                    // +1 because the xPosition is 0 indexed
-                    for (int i = xPosition; i > xPosition - piece.length + 1; i--) {
-                        for (int j = nextColumn; j >= nextColumn - fullnesOfPiece(); j--) {
-                            board[i][j] += board[i][j - 1];
+                for (int i = xPosition; i >= xPosition - piece.length + 1; i--) {
+                    int yIterations = firstNonZeroFromRight();
+                    for (int j = nextColumn; j >= nextColumn - firstNonZeroFromRight(); j--) {
+                        if (board[i][j] == 0 && piece[xIterations][yIterations] == 1) {
+                            board[i][j] = board[i][j - 1];
                             board[i][j - 1] = 0;
-                            System.out.println("Hey there");
+
                         }
+                        yIterations--;
+
                     }
+                    xIterations--;
+
                 }
+                clearConsole();
+                spaces_left += 1;
+                spaces_right -= 1;
                 print_board(stagingBoard);
                 print_board(board);
                 yPosition += 1;
-                movePieceRightOnBigBoard();
-
+                movePieceOnBigBoard();
             }
         } catch (Exception ignored) {
         }
