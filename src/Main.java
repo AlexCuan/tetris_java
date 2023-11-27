@@ -532,6 +532,32 @@ public class Main {
         }
         return lastRowToCheck - 1;
     }
+
+    private static int lastColumnToCheckFromRight() {
+        int lastColumnToCheck = 2;
+        for (int j = firstNonZeroFromRight(); j >= 0; j--) {
+            boolean isFull = true;
+            for (int i = firstNonZeroFromAbove(); i < piece.length; i++) {
+
+                if (piece[i][j] == 0 && lastColumnToCheck >= j) {
+                    lastColumnToCheck = j;
+                    isFull = false;
+                }
+
+            }
+
+            if (j == 0) {
+                return 0;
+            }
+
+            if (isFull) {
+                break;
+            }
+
+        }
+        System.out.println("Last column to check from the inside: " + lastColumnToCheck);
+        return lastColumnToCheck - 1;
+    }
 }
 
 
