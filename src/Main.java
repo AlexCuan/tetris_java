@@ -513,13 +513,13 @@ public class Main {
     }
 
 
-    private static int lastRowToCheck() {
+    private static int lastRowToCheckFromBottom() {
         // Iterate from below to above and check if the row is full. If it is, return the row number. Iterate
         // only from 0 to fullnesOfPiece() + 1
         int lastRowToCheck = piece.length - 1;
-        for (int j = piece.length - 1; j >= 0; j--) {
+        for (int j = piece.length - 1; j >= firstNonZeroFromAbove(); j--) {
             boolean isFull = true;
-            for (int i = 0; i < fullnesOfPiece() + 1; i++) {
+            for (int i = 0; i < firstNonZeroFromRight() + 1; i++) {
 
                 if (piece[j][i] == 0 && lastRowToCheck >= j) {
                     lastRowToCheck = j;
