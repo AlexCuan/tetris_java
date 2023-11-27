@@ -186,7 +186,7 @@ public class Main {
             print_board(stagingBoard);
             print_board(board);
 //            movePieceRightOnBigBoard();
-            movePieceDown();
+            movePieceOnBigBoard();
             generateAndPlacePiece();
         } else if (input.equalsIgnoreCase("r")) {
             rotate();
@@ -391,18 +391,27 @@ public class Main {
     }
 
 
+    static void movePieceOnBigBoard() {
+        if (checkIfPieceCanMoveDown()) {
+            // catch input
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+
+            if (input.equalsIgnoreCase("s")) {
+                movePieceDown();
+            } else if (input.equalsIgnoreCase("d")) {
+                movepiecerightonbigboard();
+            }
+        }
+    }
+
+
     static void movePieceDown() {
-        {
-            try {
-                if (checkIfPieceCanMoveDown()) {
-                    // catch input
-                    Scanner scanner = new Scanner(System.in);
-                    String input = scanner.nextLine();
-                    int nextRow = xPosition + 1;
-                    int xIterations = piece.length - 1;
-                    if (input.equalsIgnoreCase("s")) {
-                        for (int i = nextRow; i > nextRow - piece.length; i--) {
-                            int yIterations = 0;
+        try {
+            int nextRow = xPosition + 1;
+            int xIterations = piece.length - 1;
+            for (int i = nextRow; i > nextRow - piece.length; i--) {
+                int yIterations = 0;
 
                             for (int j = spaces_left; j < spaces_left + fullnesOfPiece() + 1; j++) {
                                 // Displace only the 1s and check the next block isn't a 1
