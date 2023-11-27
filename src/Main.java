@@ -344,7 +344,7 @@ public class Main {
         // Iterate over the right column of the piece and save the position of the 1s
         // from top to bottom
         int[] onesPosition = new int[piece.length];
-        int lastColumn = fullnesOfPiece();
+        int lastColumn = firstNonZeroFromRight();
         for (int i = 0; i < onesPosition.length; i++) {
             if (piece[i][lastColumn] == 1) {
                 onesPosition[i] = 1;
@@ -360,13 +360,13 @@ public class Main {
 
         boolean canMoveDown = true;
 
-        for (int j = 0; j < fullnesOfPiece() + 1; j++) {
+        for (int j = 0; j < firstNonZeroFromRight() + 1; j++) {
 
             int nextBoardRow = xPosition + 1;
 
-            for (int i = piece.length - 1; i >= lastRowToCheck(); i--) {
+            for (int i = piece.length - 1; i >= lastRowToCheckFromBottom(); i--) {
 
-                if (board[nextBoardRow][yPosition - fullnesOfPiece() + j] == 1 && piece[i][j] == 1) {
+                if (board[nextBoardRow][yPosition - firstNonZeroFromRight() + j] == 1 && piece[i][j] == 1) {
                     // I'm not proud of this, but it works
 
                     if (i == 2) {
