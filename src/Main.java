@@ -268,7 +268,7 @@ public class Main {
     }
 
     static int[] countSpacesDown() {
-        int[] spacesDown = new int[fullnesOfPiece() + 1];
+        int[] spacesDown = new int[firstNonZeroFromRight() + 1];
         for (int j = spaces_left; j < spacesDown.length + spaces_left; j++) {
 
             for (int i = 0; i < board.length; i++) {
@@ -311,7 +311,7 @@ public class Main {
         for (int i = from - pieceLength; i <= from; i++) {
 
             int yIterations = 0;
-            for (int j = spaces_left; j < spaces_left + fullnesOfPiece() + 1; j++) {
+            for (int j = spaces_left; j < spaces_left + firstNonZeroFromRight() + 1; j++) {
                 board[i][j] += piece[xIterations][yIterations];
                 setCoords(i, j);
 
@@ -331,7 +331,7 @@ public class Main {
     static int[] onesPosition(int row) {
         // Iterate over the bottom row of the piece and save the position of the 1s
         // from left to right
-        int[] onesPosition = new int[fullnesOfPiece() + 1];
+        int[] onesPosition = new int[firstNonZeroFromRight() + 1];
         for (int i = 0; i < onesPosition.length; i++) {
             if (piece[row][i] == 1) {
                 onesPosition[i] = 1;
