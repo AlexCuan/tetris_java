@@ -390,14 +390,41 @@ public class Main {
         // Iterate over the right column of the piece and check if the position of the 1s
         // from top to bottom is empty in the board
         boolean canMoveRight = true;
-        int[] onesPosition = onesPositionAtTheRight();
-        for (int i = 0; i < onesPosition.length; i++) {
-            if (board[xPosition - i][yPosition + 1] == 1 && onesPosition[i] == 1) {
-                System.out.println("Can't move right");
-                canMoveRight = false;
-                break;
+        int nextBoardColumn = yPosition + 1;
+
+        System.out.println("Last column to check: " + lastColumnToCheckFromRight());
+
+
+        for (int j = firstNonZeroFromRight(); j >= lastColumnToCheckFromRight(); j--) {
+            System.out.println("Checking piece column: " + j);
+            // lastColumnToCheckFromRight()
+            int xIteration = 0;
+
+
+            for (int i = piece.length - 1; i >= firstNonZeroFromAbove(); i--) {
+                System.out.println(firstNonZeroFromAbove());
+                System.out.println("Checking board piece: " + (xPosition - xIteration) + " " + nextBoardColumn);
+                System.out.println("Checking piece position: " + i + " " + j);
+                if (board[xPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
+                    // I'm not proud of this, but it works
+
+                    if (j == 2) {
+                        System.out.println("Can't move right");
+                        return false;
+                    }
+                    if (piece[i][j + 1] != 1) {
+                        System.out.println("Can't move right");
+                        return false;
+                    }
+                }
+                xIteration++;
+
             }
+            nextBoardColumn--;
+
+
         }
+
         return canMoveRight;
     }
 
