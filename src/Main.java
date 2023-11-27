@@ -244,13 +244,24 @@ public class Main {
 
     }
 
-    static int fullnesOfPiece() {
+    static int firstNonZeroFromRight() {
         // Count the number of columns with 1s in the piece
         int counter = 0;
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[i].length; j++) {
                 if (piece[i][j] == 1 && j > counter)
                     counter = j;
+            }
+        }
+        return counter;
+    }
+
+    static int firstNonZeroFromAbove() {
+        int counter = piece.length - 1;
+        for (int i = 0; i < piece.length; i++) {
+            for (int j = 0; j < piece[i].length; j++) {
+                if (piece[i][j] == 1 && i < counter)
+                    counter = i;
             }
         }
         return counter;
