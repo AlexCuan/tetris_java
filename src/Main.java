@@ -269,7 +269,7 @@ public class Main {
         return counter;
     }
 
-    static int firstNonZeroFromAbove() {
+    static int firstNonZeroFromAbove(int [][] piece) {
         int counter = piece.length - 1;
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[i].length; j++) {
@@ -281,7 +281,7 @@ public class Main {
     }
 
     static int[] countSpacesDown() {
-        int[] spacesDown = new int[firstNonZeroFromRight() + 1];
+        int[] spacesDown = new int[firstNonZeroFromRight(piece) + 1];
         for (int j = spaces_left; j < spacesDown.length + spaces_left; j++) {
 
             for (int i = 0; i < board.length; i++) {
@@ -318,13 +318,13 @@ public class Main {
     }
 
     static void PlacePieceBoardBig(int[][] board, int[][] piece, int from) {
-        int xIterations = 0;
-        int pieceLength = piece.length - 1;
+        int xIterations = firstNonZeroFromAbove(piece);
+        int pieceLength = piece.length - 1 - firstNonZeroFromAbove(piece);
 
         for (int i = from - pieceLength; i <= from; i++) {
 
             int yIterations = 0;
-            for (int j = spaces_left; j < spaces_left + firstNonZeroFromRight() + 1; j++) {
+            for (int j = spaces_left; j < spaces_left + firstNonZeroFromRight(piece) + 1; j++) {
                 board[i][j] += piece[xIterations][yIterations];
                 setCoords(i, j);
 
@@ -357,7 +357,7 @@ public class Main {
         // Iterate over the right column of the piece and save the position of the 1s
         // from top to bottom
         int[] onesPosition = new int[piece.length];
-        int lastColumn = firstNonZeroFromRight();
+        int lastColumn = firstNonZeroFromRight(piece);
         for (int i = 0; i < onesPosition.length; i++) {
             if (piece[i][lastColumn] == 1) {
                 onesPosition[i] = 1;
@@ -373,13 +373,13 @@ public class Main {
 
         boolean canMoveDown = true;
 
-        for (int j = 0; j < firstNonZeroFromRight() + 1; j++) {
+        for (int j = 0; j < firstNonZeroFromRight(piece) + 1; j++) {
 
             int nextBoardRow = xPosition + 1;
 
             for (int i = piece.length - 1; i >= lastRowToCheckFromBottom(); i--) {
 
-                if (board[nextBoardRow][yPosition - firstNonZeroFromRight() + j] == 1 && piece[i][j] == 1) {
+                if (board[nextBoardRow][yPosition - firstNonZeroFromRight(piece) + j] == 1 && piece[i][j] == 1) {
                     // I'm not proud of this, but it works
 
                     if (i == 2) {
@@ -407,6 +407,7 @@ public class Main {
 
         System.out.println("Last column to check: " + lastColumnToCheckFromRight());
 
+        for (int j = firstNonZeroFromRight(piece); j >= lastColumnToCheckFromRight(); j--) {
 
         for (int j = firstNonZeroFromRight(); j >= lastColumnToCheckFromRight(); j--) {
             System.out.println("Checking piece column: " + j);
@@ -414,10 +415,7 @@ public class Main {
             int xIteration = 0;
 
 
-            for (int i = piece.length - 1; i >= firstNonZeroFromAbove(); i--) {
-                System.out.println(firstNonZeroFromAbove());
-                System.out.println("Checking board piece: " + (xPosition - xIteration) + " " + nextBoardColumn);
-                System.out.println("Checking piece position: " + i + " " + j);
+            for (int i = piece.length - 1; i >= firstNonZeroFromAbove(piece); i--) {
                 if (board[xPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
                     // I'm not proud of this, but it works
 
@@ -461,10 +459,10 @@ public class Main {
         try {
             int nextRow = xPosition + 1;
             int xIterations = piece.length - 1;
-            for (int i = nextRow; i > nextRow - piece.length; i--) {
+            for (int i = nextRow; i >= nextRow - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
                 int yIterations = 0;
 
-                for (int j = spaces_left; j < spaces_left + firstNonZeroFromRight() + 1; j++) {
+                for (int j = spaces_left; j < spaces_left + firstNonZeroFromRight(piece) + 1; j++) {
                     // Displace only the 1s and check the next block isn't a 1
                     if (board[i][j] == 0 && piece[xIterations][yIterations] == 1) {
                         board[i][j] = piece[xIterations][yIterations];
@@ -495,9 +493,9 @@ public class Main {
 
                 int xIterations = piece.length - 1;
                 int nextColumn = yPosition + 1;
-                for (int i = xPosition; i >= xPosition - piece.length + 1; i--) {
-                    int yIterations = firstNonZeroFromRight();
-                    for (int j = nextColumn; j >= nextColumn - firstNonZeroFromRight(); j--) {
+                for (int i = xPosition; i >= xPosition - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
+                    int yIterations = firstNonZeroFromRight(piece);
+                    for (int j = nextColumn; j >= nextColumn - firstNonZeroFromRight(piece); j--) {
                         if (board[i][j] == 0 && piece[xIterations][yIterations] == 1) {
                             board[i][j] = board[i][j - 1];
                             board[i][j - 1] = 0;
@@ -530,9 +528,9 @@ public class Main {
         // Iterate from below to above and check if the row is full. If it is, return the row number. Iterate
         // only from 0 to fullnesOfPiece() + 1
         int lastRowToCheck = piece.length - 1;
-        for (int j = piece.length - 1; j >= firstNonZeroFromAbove(); j--) {
+        for (int j = piece.length - 1; j >= firstNonZeroFromAbove(piece); j--) {
             boolean isFull = true;
-            for (int i = 0; i < firstNonZeroFromRight() + 1; i++) {
+            for (int i = 0; i < firstNonZeroFromRight(piece) + 1; i++) {
 
                 if (piece[j][i] == 0 && lastRowToCheck >= j) {
                     lastRowToCheck = j;
@@ -548,9 +546,9 @@ public class Main {
 
     private static int lastColumnToCheckFromRight() {
         int lastColumnToCheck = 2;
-        for (int j = firstNonZeroFromRight(); j >= 0; j--) {
+        for (int j = firstNonZeroFromRight(piece); j >= 0; j--) {
             boolean isFull = true;
-            for (int i = firstNonZeroFromAbove(); i < piece.length; i++) {
+            for (int i = firstNonZeroFromAbove(piece); i < piece.length; i++) {
 
                 if (piece[i][j] == 0 && lastColumnToCheck >= j) {
                     lastColumnToCheck = j;
