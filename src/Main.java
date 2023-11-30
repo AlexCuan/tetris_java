@@ -184,14 +184,23 @@ public class Main {
         } else if (input.equalsIgnoreCase("w")) {
             rotate();
         } else if (input.equalsIgnoreCase("s")) {
-            clearBoard(stagingBoard);
-            PlacePieceBoardBig(board, piece, 2);
-            clearConsole();
-            print_board(stagingBoard);
-            print_board(board);
-//            movePieceRightOnBigBoard();
-            movePieceOnBigBoard();
-            generateAndPlacePiece();
+
+            if (checkIfPieceCanBePlacedOnBigBoard(spaces_left, piece)) {
+                clearBoard(stagingBoard);
+                PlacePieceBoardBig(board, piece, piece.length - 1 - firstNonZeroFromAbove(piece));
+                clearConsole();
+                print_board(stagingBoard);
+                print_board(board);
+                movePieceOnBigBoard();
+                generateAndPlacePiece();
+            } else {
+                clearConsole();
+                print_board(stagingBoard);
+                print_board(board);
+                System.out.println("Can't place piece");
+                userMovement();
+            }
+
         } else if (input.equalsIgnoreCase("r")) {
             rotate();
             placeStagingPiece(0);
