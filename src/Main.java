@@ -32,6 +32,10 @@ public class Main {
             updateSpacesRight();
             print_board(stagingBoard);
             print_board(board);
+            if (checkIfIsGameOver()) {
+                System.out.println("Game over");
+                break;
+            }
             userMovement();
             System.out.println(xPosition + " " + yPosition);
         }
@@ -557,6 +561,88 @@ public class Main {
         }
         System.out.println("Last column to check from the inside: " + lastColumnToCheck);
         return lastColumnToCheck - 1;
+    }
+
+    private static int lastColumnToCheckFromLeft() {
+        int lastColumnToCheck = 0;
+        for (int j = 0; j < firstNonZeroFromRight(piece) + 1; j++) {
+            boolean isFull = true;
+            for (int i = firstNonZeroFromAbove(piece); i < piece.length; i++) {
+                if (piece[i][j] == 0 && lastColumnToCheck <= j) {
+                    lastColumnToCheck = j;
+                    isFull = false;
+                }
+
+            }
+
+            if (j == 2) {
+                return 2;
+            }
+
+            if (isFull) {
+                break;
+            }
+
+        }
+        return lastColumnToCheck + 1;
+    }
+
+    static void clearRowAndDisplace(int row) {
+        Arrays.fill(board[row], 0);
+        for (int i = row; i > 0; i--) {
+            for (int j = 0; j < board[i].length; j++) {
+                board[i][j] = board[i - 1][j];
+            }
+        }
+    }
+
+    static void cleanFullRow() {
+        for (int i = 0; i < board.length; i++) {
+            boolean isFull = true;
+            for (int j = 0; j < board[i].length; j++) {
+                if (board[i][j] == 0) {
+                    isFull = false;
+                    break;
+                }
+
+            }
+            if (isFull) {
+                clearRowAndDisplace(i);
+            }
+
+        }
+    }
+
+    static boolean checkIfPieceCanBePlacedOnBigBoard(int from, int[][] piece) {
+        boolean canMoveDown = true;
+        // Iterate from 0 to piece.length - 1 - firstNonZeroFromAbove(piece) and check if there is a 1 in the
+        // board in the same position as the piece
+        int fromBoardVertical = 0;
+
+        for (int i = firstNonZeroFromAbove(piece); i < piece.length; i++) {
+            int fromBoardHorizontal = from;
+            for (int j = 0; j <= firstNonZeroFromRight(piece); j++) {
+                if (board[fromBoardVertical][fromBoardHorizontal] == 1 && piece[i][j] == 1) {
+                    return false;
+                }
+                fromBoardHorizontal++;
+            }
+            fromBoardVertical++;
+        }
+        return canMoveDown;
+    }
+
+    static boolean checkIfIsGameOver() {
+        boolean gameOver = true;
+        for (int i = 0; i < board[0].length - firstNonZeroFromRight(bundleOfPieces[0]); i++) {
+            if (checkIfPieceCanBePlacedOnBigBoard(i, bundleOfPieces[0])) return false;
+        }
+        for (int i = 0; i < board[0].length - firstNonZeroFromRight(bundleOfPieces[1]); i++) {
+            if (checkIfPieceCanBePlacedOnBigBoard(i, bundleOfPieces[1])) return false;
+        }
+
+
+        return gameOver;
     }
 }
 
