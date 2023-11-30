@@ -439,6 +439,33 @@ public class Main {
         return canMoveRight;
     }
 
+    static boolean checkIfPieceCanMoveLeft() {
+        boolean canMoveLeft = true;
+        int nextBoardColumn = spaces_left - 1;
+
+        for (int j = 0; j < lastColumnToCheckFromLeft() + 1; j++) {
+            int xIteration = 0;
+            for (int i = piece.length - 1; i >= firstNonZeroFromAbove(piece); i--) {
+                if (board[xPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
+                    // I'm not proud of this, but it works
+
+                    if (j == 0) {
+                        System.out.println("Can't move left");
+                        return false;
+                    }
+                    if (piece[i][j - 1] != 1) {
+                        System.out.println("Can't move left");
+                        return false;
+                    }
+                }
+                xIteration++;
+
+            }
+            nextBoardColumn++;
+        }
+        return canMoveLeft;
+    }
+
 
     static void movePieceOnBigBoard() {
         if (checkIfPieceCanMoveDown()) {
@@ -513,6 +540,41 @@ public class Main {
                 print_board(stagingBoard);
                 print_board(board);
                 yPosition += 1;
+                movePieceOnBigBoard();
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
+    static void movePieceLeftOnBigBoard() {
+        try {
+            if (checkIfPieceCanMoveLeft()) {
+                // catch input
+                System.out.println("Can move left");
+
+                int xIterations = piece.length - 1;
+                int nextColumn = spaces_left - 1;
+                for (int i = xPosition; i >= xPosition - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
+                    int yIterations = 0;
+                    System.out.println(firstNonZeroFromRight(piece));
+                    for (int j = nextColumn; j <= nextColumn + firstNonZeroFromRight(piece); j++) {
+                        if (board[i][j] == 0 && piece[xIterations][yIterations] == 1) {
+                            board[i][j] = board[i][j + 1];
+                            board[i][j + 1] = 0;
+
+                        }
+                        yIterations++;
+
+                    }
+                    xIterations--;
+
+                }
+                clearConsole();
+                spaces_left -= 1;
+                spaces_right += 1;
+                print_board(stagingBoard);
+                print_board(board);
+                yPosition -= 1;
                 movePieceOnBigBoard();
             }
         } catch (Exception ignored) {
