@@ -477,6 +477,8 @@ public class Main {
                 movePieceDown();
             } else if (input.equalsIgnoreCase("d")) {
                 movepiecerightonbigboard();
+            } else if (input.equalsIgnoreCase("a")) {
+                movePieceLeftOnBigBoard();
             }
         }
     }
