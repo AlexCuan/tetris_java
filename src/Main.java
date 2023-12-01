@@ -6,63 +6,99 @@ import java.util.Scanner;
 
 public class Main {
 
-    // create a global variable
+    /**
+     * This variable is used to keep track of the spaces to the left and the right of the piece. It is updated every
+     * time the piece is moved left or right
+     */
     private static int spaces_left = 0;
     private static int spaces_right = 0;
 
+    /**
+     * These variables are used to keep track of the position of the piece in the board. They are updated every time
+     * the piece is moved
+     */
     private static int xPosition = 0;
     private static int yPosition = 0;
     //TODO: update spaces_right everytime a piece is placed in the board
+
+    /**
+     * This variable is used to keep track of the state of the piece. If it's rotated or not
+     */
     private static boolean rotated = false;
 
+    /**
+     * Main board, defined by a matrix of X by X dimension
+     */
     private static int[][] board = new int[8][8];
+
+    /**
+     * Staging board, defined by a matrix of 3 by X dimension. This board is used to display the piece before it is
+     * placed in the main board
+     */
     private static int[][] stagingBoard = new int[3][8];
 
+    /**
+     * This variable is used to store the piece that is going to be used. It is a 2 dimension array. It will store
+     * the normal shape of the piece, and the rotated one
+     */
     private static int[][][] bundleOfPieces;
+
+    /**
+     * This variable is used to store the piece that is going to be used. It is a 2 dimension array. It will store
+     * the normal shape of the piece, or the rotated one
+     */
     private static int[][] piece;
 
+/**
+     * This variable is used to keep track of the state of the piece on the edges. If it's out of bounds or not
+     */
     private static boolean pieceOutOfBounds = false;
 
 
     public static void main(String[] args) {
         generateAndPlacePiece();
+        // input
+        clearConsole();
+
+        System.out.println("Welcome to Tetris");
+        System.out.println("1. Basic branch");
+        System.out.println("2. Advanced branch");
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (input.equals("1")) {
+//            basicBranch();
+        } else if (input.equals("2")) {
+            advancedBranch();
+        } else {
+            System.out.println("Invalid input. Exiting...");
+        }
+
+
+    }
+
+    public static void advancedBranch() {
         while (true) {
             clearConsole();
             updateSpacesLeft();
             updateSpacesRight();
-            print_board(stagingBoard);
-            print_board(board);
+            checkIfRowIsFull();
+            printBoard(stagingBoard);
+            printBoard(board);
             if (checkIfIsGameOver()) {
                 System.out.println("Game over");
                 break;
             }
             userMovement();
-            System.out.println(xPosition + " " + yPosition);
         }
-//        generate_piece();
-//        piece = bundleOfPieces[0];
-//        placeStagingPiece(0);
-//        print_board(stagingBoard);
-//        print_board(board);
-//        updateSpacesLeft();
-//        updateSpacesRight();
-//        while (true) {
-//            userMovement();
-//            updateSpacesLeft();
-//            updateSpacesRight();
-//            print_board(stagingBoard);
-//            print_board(board);
-//
-//            System.out.println("Spaces right: " + spaces_right);
-//            System.out.println("Spaces left: " + spaces_left);
-//            System.out.println("Piece out of bounds: " + pieceOutOfBounds);
-////            System.out.println("Spaces down: " + Arrays.toString(countSpacesDown()));
-//        }
-
-
     }
 
+    /**
+     * There are a set of predefine pieces. Each piece will have it's normal shape, and a rotated one.
+     * @returns Two dimension array containing a random pair of pieces (normal shape and rotated one)
+     */
     private static void generate_piece() {
+
+
         // *
         // *
         // *
@@ -99,34 +135,43 @@ public class Main {
         int[][] piece_6 = {{0, 0, 0}, {1, 1, 0}, {1, 1, 0}};
 
         // create array of int [][] pieces
-        int[][][][] pieces = {{piece_1, piece_1_rotated}, {piece_2, piece_2_rotated}, {piece_3, piece_3_rotated}, {piece_4, piece_4_rotated}, {piece_5, piece_5_rotated}, {piece_6}};
+        int[][][][] pieces = {{piece_1, piece_1_rotated}, {piece_2, piece_2_rotated}, {piece_3, piece_3_rotated}, {piece_4, piece_4_rotated}, {piece_5, piece_5_rotated}, {piece_6, piece_6}};
 
         // generate random number between 0 and 5
         int random_number = (int) (Math.random() * 6);
 
         bundleOfPieces = pieces[random_number];
-//        bundleOfPieces = pieces[3];
     }
 
+    /**
+     * Once a piece is generated and stored into bundleOfPieces, main shape of the piece is assigned to the piece global
+     * variable which represents the "in-use" piece. Then, the piece is placed in the staging board, and the spaces
+     * variables are updated. Coordinates are also updated and set to 0,0 because there is no active piece in the main
+     * board
+     */
     private static void generateAndPlacePiece() {
         generate_piece();
         piece = bundleOfPieces[0];
         setArbitrarySpacesLeft(0);
+        rotated = false;
         placeStagingPiece(0);
         setCoords(0, 0);
     }
 
+    /**
+     * This function is used to place the piece in the staging board. It iterates over the piece and places it in the
+     * correct position. It also checks if the piece is out of bounds, and if it is, it sets the pieceOutOfBounds
+     * variable to true
+     * @param addedSpaces Used when moving the piece left or right. It adds or subtracts spaces to the left or right
+     */
+    private static void placeStagingPiece(int addedSpaces) {
 
-    private static void placeStagingPiece(int added_spaces) {
-        // Iterate over the stagging board and place the piece in the correct position
-        // Sum the added spaces to the left_spaces and place the piece in "j" column + added_spaces
-        // E.g: if added_spaces = 1, start placing the piece in the "j + 1 + left_spaces" column
         clearBoard(stagingBoard);
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[i].length; j++) {
                 try {
                     if (piece[i][j] == 1) {
-                        stagingBoard[i][j + spaces_left + added_spaces] = piece[i][j];
+                        stagingBoard[i][j + spaces_left + addedSpaces] = piece[i][j];
                     }
 
                     pieceOutOfBounds = false;
@@ -139,7 +184,11 @@ public class Main {
 
     }
 
-    private static void print_board(int board[][]) {
+    /**
+     * Iterates over the board matrix and prints it. It replaces 1 with ◼, and 0 with -
+     * @param board Matrix to be displayed
+     */
+    private static void printBoard(int[][] board) {
 
         // Iterate over the board and print it
 
@@ -154,9 +203,16 @@ public class Main {
             }
             // Print new empty line to separate rows
             System.out.println();
+
         }
     }
 
+
+    /**
+     * Rotates the piece. If the piece is not rotated, it will rotate it. If it's rotated, it will rotate it back to
+     * its original position. The rotation is done by changing the piece global variable to the rotated one and
+     * updating the rotated variable
+     */
     public static void rotate() {
         if (rotated) {
             rotated = false;
@@ -167,6 +223,10 @@ public class Main {
         }
     }
 
+    /**
+     * Clears the board by setting all the values to 0
+     * @param usedBoard Matrix to be cleared
+     */
     static void clearBoard(int[][] usedBoard) {
         // Iterate over the board and set all the values to 0
         for (int i = 0; i < usedBoard.length; i++) {
@@ -174,46 +234,63 @@ public class Main {
         }
     }
 
+    /**
+     * Used to catch the user input and move the piece. It also checks if the piece can be placed in
+     * the board, and if it can't, it will display a message and call itself again. Buttons mapped are:
+     * - a: move left
+     * - d: move right
+     * - r: rotate
+     * - s: move down
+     * Each time a piece is going to move down, if it can, it will be placed into the big board and another process
+     * will start until the piece can't move down anymore
+     */
     static void userMovement() {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
+
         if (input.equalsIgnoreCase("a") && spaces_left > 0) {
             placeStagingPiece(-1);
-        } else if (input.equalsIgnoreCase("d") && spaces_right > 0) {
+        }
+        else if (input.equalsIgnoreCase("d") && spaces_right > 0) {
             placeStagingPiece(1);
-        } else if (input.equalsIgnoreCase("w")) {
-            rotate();
-        } else if (input.equalsIgnoreCase("s")) {
+        }
+        else if (input.equalsIgnoreCase("s")) {
 
             if (checkIfPieceCanBePlacedOnBigBoard(spaces_left, piece)) {
                 clearBoard(stagingBoard);
                 PlacePieceBoardBig(board, piece, piece.length - 1 - firstNonZeroFromAbove(piece));
                 clearConsole();
-                print_board(stagingBoard);
-                print_board(board);
+                printBoard(stagingBoard);
+                printBoard(board);
                 movePieceOnBigBoard();
                 generateAndPlacePiece();
             } else {
                 clearConsole();
-                print_board(stagingBoard);
-                print_board(board);
+                printBoard(stagingBoard);
+                printBoard(board);
                 System.out.println("Can't place piece");
                 userMovement();
             }
 
-        } else if (input.equalsIgnoreCase("r")) {
+        }
+        else if (input.equalsIgnoreCase("r")) {
             rotate();
             placeStagingPiece(0);
 
             if (pieceOutOfBounds) {
                 readjustPiece();
             }
-        } else if (input.equalsIgnoreCase("q")) {
+        }
+        // TODO: remove this function
+        else if (input.equalsIgnoreCase("q")) {
             PlacePieceBoardBig(board, piece, Arrays.stream(countSpacesDown()).min().getAsInt() - 1);
+            generateAndPlacePiece();
         }
     }
 
-
+    /**
+     * Clears the console using ANSI escape codes
+     */
     static void clearConsole() {
         // Clear the console using ANSI escape codes
         System.out.print("\033[H\033[2J");
@@ -221,6 +298,10 @@ public class Main {
     }
 
 
+    /**
+     * This function is used to update the spaces_left variable. It iterates over the 3 first lines of the board and
+     * saves the position of the first 1 from left to right
+     */
     static void updateSpacesLeft() {
         // Iterate over the 3 first lines of the board and save the position of the first 1 from left to right
 
@@ -235,6 +316,10 @@ public class Main {
         spaces_left = counter;
     }
 
+    /**
+     * This function is used to update the spaces_right variable. It iterates over the 3 first lines of the board and
+     * saves the position of the first 1 from right to left
+     */
     static void updateSpacesRight() {
         // Iterate over the 3 first lines of the board and save the position of the first 1 from right to left
 
@@ -250,6 +335,10 @@ public class Main {
         spaces_right = stagingBoard[1].length - 1 - counter;
     }
 
+    /**
+     * This function is used to readjust the piece if it's out of bounds. It replaces the piece in the staging board
+     * -1 position to the left.
+     */
     static void readjustPiece() {
         clearBoard(stagingBoard);
         pieceOutOfBounds = false;
@@ -257,8 +346,12 @@ public class Main {
 
     }
 
-    static int firstNonZeroFromRight() {
-        // Count the number of columns with 1s in the piece
+    /**
+     * It returns the first column of a piece with a 1 from right to left
+     * @param piece Piece (matrix) to be checked
+     * @return First column of a piece with a 1 from right to left
+     */
+    static int firstNonZeroFromRight(int[][] piece) {
         int counter = 0;
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[i].length; j++) {
@@ -269,7 +362,13 @@ public class Main {
         return counter;
     }
 
-    static int firstNonZeroFromAbove(int [][] piece) {
+    /**
+     * It returns the first row of a piece with a 1 from above to below
+     * @param piece Piece (matrix) to be checked
+     * @return  First row of a piece with a 1 from above to below
+     */
+    static int firstNonZeroFromAbove(int[][] piece) {
+
         int counter = piece.length - 1;
         for (int i = 0; i < piece.length; i++) {
             for (int j = 0; j < piece[i].length; j++) {
@@ -280,6 +379,7 @@ public class Main {
         return counter;
     }
 
+    // TODO: remove this function
     static int[] countSpacesDown() {
         int[] spacesDown = new int[firstNonZeroFromRight(piece) + 1];
         for (int j = spaces_left; j < spacesDown.length + spaces_left; j++) {
@@ -297,6 +397,7 @@ public class Main {
         return spacesDown;
     }
 
+    //TODO: remove this function
     static int pieceSpacesDown() {
         // In the real world, this function is anecdotal if you don't want to add an extra piece
         // But if you want to add an extra piece, this function is crucial to know how many spaces
@@ -317,6 +418,15 @@ public class Main {
         return minSpaceDown;
     }
 
+    /**
+     * This function is used to place the piece in the main board. It iterates over the piece and places it in the
+     * corresponding position below. It also updates the coordinates of the piece in the main board
+     *
+     * @param board Matrix to be updated with the piece (usually the main board)
+     * @param piece Piece to be placed in the board
+     * @param from  Row where the piece is going to be placed
+     */
+    //TODO refactor this function so we can set arbitrary spaces left
     static void PlacePieceBoardBig(int[][] board, int[][] piece, int from) {
         int xIterations = firstNonZeroFromAbove(piece);
         int pieceLength = piece.length - 1 - firstNonZeroFromAbove(piece);
@@ -335,16 +445,22 @@ public class Main {
         }
     }
 
+    /**
+     * This function is used to set the coordinates of the piece in the main board
+     * @param x Row
+     * @param y Column
+     */
     static void setCoords(int x, int y) {
         xPosition = x;
         yPosition = y;
 
     }
 
+    // TODO: remove this function
     static int[] onesPosition(int row) {
         // Iterate over the bottom row of the piece and save the position of the 1s
         // from left to right
-        int[] onesPosition = new int[firstNonZeroFromRight() + 1];
+        int[] onesPosition = new int[firstNonZeroFromRight(piece) + 1];
         for (int i = 0; i < onesPosition.length; i++) {
             if (piece[row][i] == 1) {
                 onesPosition[i] = 1;
@@ -353,6 +469,8 @@ public class Main {
         return onesPosition;
     }
 
+
+    // TODO: remove this function
     static int[] onesPositionAtTheRight() {
         // Iterate over the right column of the piece and save the position of the 1s
         // from top to bottom
@@ -366,10 +484,15 @@ public class Main {
         return onesPosition;
     }
 
+    /**
+     * This function is used to check if the piece can move down. It iterates from the bottom row of the piece to the
+     * last relevant row from the bottom. It checks if the next position of each populated cell of the piece will be
+     * empty in the board. It takes into account the cases where the piece is only one row, and the cases where the piece
+     * can encounter a 1 because of the shape of the piece itself.
+     *
+     * @return True if the piece can move down, false if it can't
+     */
     static boolean checkIfPieceCanMoveDown() {
-        // Iterate over the bottom row of the piece and check if the position of the 1s
-        // from left to right is empty in the board
-
 
         boolean canMoveDown = true;
 
@@ -380,51 +503,49 @@ public class Main {
             for (int i = piece.length - 1; i >= lastRowToCheckFromBottom(); i--) {
 
                 if (board[nextBoardRow][yPosition - firstNonZeroFromRight(piece) + j] == 1 && piece[i][j] == 1) {
-                    // I'm not proud of this, but it works
 
                     if (i == 2) {
-                        System.out.println("Can't move down");
                         return false;
                     }
                     if (piece[i + 1][j] != 1) {
-                        System.out.println("Can't move down");
                         return false;
                     }
                 }
                 nextBoardRow--;
+
             }
-
-
         }
+
         return canMoveDown;
+
     }
 
+    /**
+     * This function is used to check if the piece can move right. It iterates from the first non-zero column from the
+     * right to the last relevant column to check from the right. It checks if the next position of each populated cell
+     * of the piece will be empty in the board. It takes into account the cases where the piece is only one column,
+     * and the cases where the piece can encounter a 1 because of the shape of the piece itself.
+     *
+     * @return True if the piece can move right, false if it can't
+     */
     static boolean checkIfPieceCanMoveRight() {
-        // Iterate over the right column of the piece and check if the position of the 1s
-        // from top to bottom is empty in the board
+
         boolean canMoveRight = true;
         int nextBoardColumn = yPosition + 1;
 
-        System.out.println("Last column to check: " + lastColumnToCheckFromRight());
 
         for (int j = firstNonZeroFromRight(piece); j >= lastColumnToCheckFromRight(); j--) {
 
-        for (int j = firstNonZeroFromRight(); j >= lastColumnToCheckFromRight(); j--) {
-            System.out.println("Checking piece column: " + j);
-            // lastColumnToCheckFromRight()
             int xIteration = 0;
 
 
             for (int i = piece.length - 1; i >= firstNonZeroFromAbove(piece); i--) {
                 if (board[xPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
-                    // I'm not proud of this, but it works
 
                     if (j == 2) {
-                        System.out.println("Can't move right");
                         return false;
                     }
                     if (piece[i][j + 1] != 1) {
-                        System.out.println("Can't move right");
                         return false;
                     }
                 }
@@ -439,6 +560,14 @@ public class Main {
         return canMoveRight;
     }
 
+    /**
+     * This function is used to check if the piece can move left. It iterates from the first column of the piece to
+     * the last relevant column to check from the left. It checks if the next position of each populated cell of the
+     * piece will be empty in the board. It takes into account the cases where the piece is only one column, and the
+     * cases where the piece can encounter a 1 because of the shape of the piece itself.
+     *
+     * @return True if the piece can move left, false if it can't
+     */
     static boolean checkIfPieceCanMoveLeft() {
         boolean canMoveLeft = true;
         int nextBoardColumn = spaces_left - 1;
@@ -467,6 +596,10 @@ public class Main {
     }
 
 
+    /**
+     * This function is a hub for the piece movement. It catches the input and calls the corresponding function
+     * depending on the input. It's also recursive, so it will call itself until the piece can't move down anymore
+     */
     static void movePieceOnBigBoard() {
         if (checkIfPieceCanMoveDown()) {
             // catch input
@@ -480,10 +613,18 @@ public class Main {
             } else if (input.equalsIgnoreCase("a")) {
                 movePieceLeftOnBigBoard();
             }
+            else{
+                movePieceOnBigBoard();
+            }
         }
     }
 
 
+    /**
+     *  This function is used to move the piece down. It iterates over the piece 1's and moves them down one position
+     *  if they can be moved down. Once the row is moved, it clears the row above. It also updates the coordinates of
+     *  the piece in the main board
+     */
     static void movePieceDown() {
         try {
             int nextRow = xPosition + 1;
@@ -505,8 +646,8 @@ public class Main {
             }
 
             clearConsole();
-            print_board(stagingBoard);
-            print_board(board);
+            printBoard(stagingBoard);
+            printBoard(board);
             xPosition += 1;
             movePieceOnBigBoard();
         } catch (Exception e) {
@@ -514,11 +655,15 @@ public class Main {
         }
     }
 
+    /**
+     * This function is used to move the piece right. It iterates over the piece 1's and moves them right one position
+     * if they can be moved right. Once the row is moved, it clears the row to the left. It also updates the coordinates
+     * of the piece in the main board
+     */
     static void movepiecerightonbigboard() {
         try {
             if (checkIfPieceCanMoveRight()) {
                 // catch input
-                System.out.println("Can move right");
 
                 int xIterations = piece.length - 1;
                 int nextColumn = yPosition + 1;
@@ -539,8 +684,8 @@ public class Main {
                 clearConsole();
                 spaces_left += 1;
                 spaces_right -= 1;
-                print_board(stagingBoard);
-                print_board(board);
+                printBoard(stagingBoard);
+                printBoard(board);
                 yPosition += 1;
                 movePieceOnBigBoard();
             }
@@ -548,6 +693,11 @@ public class Main {
         }
     }
 
+    /**
+     * This function is used to move the piece left. It iterates over the piece 1's and moves them left one position
+     * if they can be moved left. Once the row is moved, it clears the row to the right. It also updates the coordinates
+     * of the piece in the main board
+     */
     static void movePieceLeftOnBigBoard() {
         try {
             if (checkIfPieceCanMoveLeft()) {
@@ -574,8 +724,8 @@ public class Main {
                 clearConsole();
                 spaces_left -= 1;
                 spaces_right += 1;
-                print_board(stagingBoard);
-                print_board(board);
+                printBoard(stagingBoard);
+                printBoard(board);
                 yPosition -= 1;
                 movePieceOnBigBoard();
             }
@@ -583,11 +733,22 @@ public class Main {
         }
     }
 
+    /**
+     * This function is used to set the spaces_left variable to an arbitrary value.
+     *
+     * @param spaces Arbitrary value to be set to spaces_left
+     */
     static void setArbitrarySpacesLeft(int spaces) {
         spaces_left = spaces;
     }
 
-
+    /**
+     * This function is used to get the last relevant row to check when displacing the piece down. It iterates from
+     * below to above and checks if the row is full. If it is, it returns the row number. Returns the row number - 1
+     * because is more convenient when iterating over the piece
+     * 
+     * @return Last non-full row - 1
+     */
     private static int lastRowToCheckFromBottom() {
         // Iterate from below to above and check if the row is full. If it is, return the row number. Iterate
         // only from 0 to fullnesOfPiece() + 1
@@ -600,6 +761,7 @@ public class Main {
                     lastRowToCheck = j;
                     isFull = false;
                 }
+
             }
             if (isFull) {
                 break;
@@ -607,6 +769,13 @@ public class Main {
         }
         return lastRowToCheck - 1;
     }
+
+    /**
+     * This function is used to get the last relevant column to check when displacing the piece right. It iterates from
+     * right to left and checks if the column is full. If it is, it returns the column number - 1. Returns the column
+     * number - 1 because is more convenient when iterating over the piece
+     * @return  Last non-full from right to left - 1
+     */
 
     private static int lastColumnToCheckFromRight() {
         int lastColumnToCheck = 2;
@@ -630,10 +799,16 @@ public class Main {
             }
 
         }
-        System.out.println("Last column to check from the inside: " + lastColumnToCheck);
         return lastColumnToCheck - 1;
     }
 
+    /**
+     * This function is used to get the last relevant column to check when displacing the piece left. It iterates from
+     * left to right and checks if the column is full. If it is, it returns the column number + 1. Returns the column
+     * number + 1 because is more convenient when iterating over the piece
+     *
+     * @return  Last non-full from left to right + 1
+     */
     private static int lastColumnToCheckFromLeft() {
         int lastColumnToCheck = 0;
         for (int j = 0; j < firstNonZeroFromRight(piece) + 1; j++) {
@@ -658,6 +833,11 @@ public class Main {
         return lastColumnToCheck + 1;
     }
 
+    /**
+     * This function is used to clear a row and displace all the rows above one position down
+     *
+     * @param row Row to be cleared
+     */
     static void clearRowAndDisplace(int row) {
         Arrays.fill(board[row], 0);
         for (int i = row; i > 0; i--) {
@@ -667,7 +847,14 @@ public class Main {
         }
     }
 
-    static void cleanFullRow() {
+    /**
+     * This function is used to check if a row is full. It iterates over the row and checks if there is a 0. If there
+     * is, continue iterating. If there isn't, calls clearRowAndDisplace() to clear the row and displace all the rows
+     *
+     * @param row Row to be checked
+     * @return True if the row is full, false if it isn't
+     */
+    static void checkIfRowIsFull() {
         for (int i = 0; i < board.length; i++) {
             boolean isFull = true;
             for (int j = 0; j < board[i].length; j++) {
@@ -684,6 +871,14 @@ public class Main {
         }
     }
 
+    /**
+     * This function is used to check if a piece can be placed in the main board. It iterates over the piece and checks
+     * if there is a 1 in the board in the same position as the piece
+     *
+     * @param from  Row where the piece is going to be placed
+     * @param piece Piece to be placed in the board
+     * @return True if the piece can be placed, false if it can't
+     */
     static boolean checkIfPieceCanBePlacedOnBigBoard(int from, int[][] piece) {
         boolean canMoveDown = true;
         // Iterate from 0 to piece.length - 1 - firstNonZeroFromAbove(piece) and check if there is a 1 in the
@@ -703,6 +898,14 @@ public class Main {
         return canMoveDown;
     }
 
+    /**
+     * This function is used to check if the game is over. It simulates the placement of the next piece in the board
+     * in all the posible positions at the beginning. If the piece can be placed, it returns false. If it can't, it will
+     * check for the rotated version of the piece. If the rotated version can be placed, it returns false. If it can't,
+     * it will return true and the game will be over
+     *
+     * @return True if the game is over, false if the piece can be placed
+     */
     static boolean checkIfIsGameOver() {
         boolean gameOver = true;
         for (int i = 0; i < board[0].length - firstNonZeroFromRight(bundleOfPieces[0]); i++) {
