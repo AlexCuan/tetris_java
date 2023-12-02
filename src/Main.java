@@ -959,6 +959,7 @@ public class Main {
                 if (board[fromVertical][fromBoardHorizontal] == 1 && piece[i][j] == 1) {
                     return false;
                 }
+
                 fromBoardHorizontal++;
             }
             fromVertical++;
@@ -972,8 +973,7 @@ public class Main {
         int lastYCoord = 0;
         for (int i = 0; i < board.length - piece.length + 1 + firstNonZeroFromAbove(piece); i++) {
             for (int j = board[i].length - firstNonZeroFromRight(piece) - 1; j >= 0; j--) {
-                System.out.println(i + " " + j);
-                if (individualBasicCheckingAlgorithm(i, j, piece)) {
+                if (individualBasicCheckingAlgorithm(i, j, piece) && !checkIfSpaceIsBlocked(i, j)) {
                     canMoveDown = true;
                     lastYCoord = j;
                     lastXCoord = i;
@@ -1005,6 +1005,26 @@ public class Main {
             xIterations++;
 
         }
+    }
+
+    /**
+     * This function is used to check if a space is blocked. It iterates over the board from the space to the top
+     * and checks if there is a 1 in the board in the same position as the piece
+     *
+     * @param fromVertical  Upper row of the space to be checked
+     * @param fromHorizontal    Left column of the space to be checked
+     * @return  True if the space is blocked, false if it isn't
+     */
+    public static boolean checkIfSpaceIsBlocked(int fromVertical, int fromHorizontal){
+        for (int i = fromVertical; i >= 0; i--){
+            System.out.println("i: " + i + " j: " + fromHorizontal);
+            for (int j = fromHorizontal; j <= fromHorizontal + firstNonZeroFromRight(piece); j++){
+                if (board[i][j] == 1){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 
