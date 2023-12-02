@@ -49,14 +49,13 @@ public class Main {
      */
     private static int[][] piece;
 
-/**
+    /**
      * This variable is used to keep track of the state of the piece on the edges. If it's out of bounds or not
      */
     private static boolean pieceOutOfBounds = false;
 
 
     public static void main(String[] args) {
-        generateAndPlacePiece();
         // input
         clearConsole();
 
@@ -66,7 +65,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
         if (input.equals("1")) {
-//            basicBranch();
+            basicBranch();
         } else if (input.equals("2")) {
             advancedBranch();
         } else {
@@ -76,8 +75,29 @@ public class Main {
 
     }
 
+    public static void basicBranch() {
+        while (true) {
+            generateAndPlacePiece();
+            clearConsole();
+            checkIfRowIsFull();
+            printBoard(stagingBoard);
+            printBoard(board);
+            if (checkIfIsGameOver()) {
+                System.out.println("Game over");
+                break;
+            }
+            Scanner scanner = new Scanner(System.in);
+            String input = scanner.nextLine();
+            // if scanner "" then use basic movement
+            if (input.equals("")) {
+                wholeBoardBasicCheckingAlgorithm2(piece);
+            }
+        }
+    }
+
     public static void advancedBranch() {
         while (true) {
+            generateAndPlacePiece();
             clearConsole();
             updateSpacesLeft();
             updateSpacesRight();
@@ -94,6 +114,7 @@ public class Main {
 
     /**
      * There are a set of predefine pieces. Each piece will have it's normal shape, and a rotated one.
+     *
      * @returns Two dimension array containing a random pair of pieces (normal shape and rotated one)
      */
     private static void generate_piece() {
@@ -162,6 +183,7 @@ public class Main {
      * This function is used to place the piece in the staging board. It iterates over the piece and places it in the
      * correct position. It also checks if the piece is out of bounds, and if it is, it sets the pieceOutOfBounds
      * variable to true
+     *
      * @param addedSpaces Used when moving the piece left or right. It adds or subtracts spaces to the left or right
      */
     private static void placeStagingPiece(int addedSpaces) {
@@ -186,6 +208,7 @@ public class Main {
 
     /**
      * Iterates over the board matrix and prints it. It replaces 1 with ◼, and 0 with -
+     *
      * @param board Matrix to be displayed
      */
     private static void printBoard(int[][] board) {
@@ -225,6 +248,7 @@ public class Main {
 
     /**
      * Clears the board by setting all the values to 0
+     *
      * @param usedBoard Matrix to be cleared
      */
     static void clearBoard(int[][] usedBoard) {
@@ -250,15 +274,13 @@ public class Main {
 
         if (input.equalsIgnoreCase("a") && spaces_left > 0) {
             placeStagingPiece(-1);
-        }
-        else if (input.equalsIgnoreCase("d") && spaces_right > 0) {
+        } else if (input.equalsIgnoreCase("d") && spaces_right > 0) {
             placeStagingPiece(1);
-        }
-        else if (input.equalsIgnoreCase("s")) {
+        } else if (input.equalsIgnoreCase("s")) {
 
             if (checkIfPieceCanBePlacedOnBigBoard(spaces_left, piece)) {
                 clearBoard(stagingBoard);
-                PlacePieceBoardBig(board, piece, piece.length - 1 - firstNonZeroFromAbove(piece));
+                placePieceBoardBig(board, piece, piece.length - 1 - firstNonZeroFromAbove(piece));
                 clearConsole();
                 printBoard(stagingBoard);
                 printBoard(board);
@@ -272,8 +294,7 @@ public class Main {
                 userMovement();
             }
 
-        }
-        else if (input.equalsIgnoreCase("r")) {
+        } else if (input.equalsIgnoreCase("r")) {
             rotate();
             placeStagingPiece(0);
 
@@ -283,7 +304,7 @@ public class Main {
         }
         // TODO: remove this function
         else if (input.equalsIgnoreCase("q")) {
-            PlacePieceBoardBig(board, piece, Arrays.stream(countSpacesDown()).min().getAsInt() - 1);
+            placePieceBoardBig(board, piece, Arrays.stream(countSpacesDown()).min().getAsInt() - 1);
             generateAndPlacePiece();
         }
     }
@@ -348,6 +369,7 @@ public class Main {
 
     /**
      * It returns the first column of a piece with a 1 from right to left
+     *
      * @param piece Piece (matrix) to be checked
      * @return First column of a piece with a 1 from right to left
      */
@@ -364,8 +386,9 @@ public class Main {
 
     /**
      * It returns the first row of a piece with a 1 from above to below
+     *
      * @param piece Piece (matrix) to be checked
-     * @return  First row of a piece with a 1 from above to below
+     * @return First row of a piece with a 1 from above to below
      */
     static int firstNonZeroFromAbove(int[][] piece) {
 
@@ -427,7 +450,7 @@ public class Main {
      * @param from  Row where the piece is going to be placed
      */
     //TODO refactor this function so we can set arbitrary spaces left
-    static void PlacePieceBoardBig(int[][] board, int[][] piece, int from) {
+    static void placePieceBoardBig(int[][] board, int[][] piece, int from) {
         int xIterations = firstNonZeroFromAbove(piece);
         int pieceLength = piece.length - 1 - firstNonZeroFromAbove(piece);
 
@@ -447,6 +470,7 @@ public class Main {
 
     /**
      * This function is used to set the coordinates of the piece in the main board
+     *
      * @param x Row
      * @param y Column
      */
@@ -612,8 +636,7 @@ public class Main {
                 movepiecerightonbigboard();
             } else if (input.equalsIgnoreCase("a")) {
                 movePieceLeftOnBigBoard();
-            }
-            else{
+            } else {
                 movePieceOnBigBoard();
             }
         }
@@ -621,9 +644,9 @@ public class Main {
 
 
     /**
-     *  This function is used to move the piece down. It iterates over the piece 1's and moves them down one position
-     *  if they can be moved down. Once the row is moved, it clears the row above. It also updates the coordinates of
-     *  the piece in the main board
+     * This function is used to move the piece down. It iterates over the piece 1's and moves them down one position
+     * if they can be moved down. Once the row is moved, it clears the row above. It also updates the coordinates of
+     * the piece in the main board
      */
     static void movePieceDown() {
         try {
@@ -746,7 +769,7 @@ public class Main {
      * This function is used to get the last relevant row to check when displacing the piece down. It iterates from
      * below to above and checks if the row is full. If it is, it returns the row number. Returns the row number - 1
      * because is more convenient when iterating over the piece
-     * 
+     *
      * @return Last non-full row - 1
      */
     private static int lastRowToCheckFromBottom() {
@@ -774,7 +797,8 @@ public class Main {
      * This function is used to get the last relevant column to check when displacing the piece right. It iterates from
      * right to left and checks if the column is full. If it is, it returns the column number - 1. Returns the column
      * number - 1 because is more convenient when iterating over the piece
-     * @return  Last non-full from right to left - 1
+     *
+     * @return Last non-full from right to left - 1
      */
 
     private static int lastColumnToCheckFromRight() {
@@ -807,7 +831,7 @@ public class Main {
      * left to right and checks if the column is full. If it is, it returns the column number + 1. Returns the column
      * number + 1 because is more convenient when iterating over the piece
      *
-     * @return  Last non-full from left to right + 1
+     * @return Last non-full from left to right + 1
      */
     private static int lastColumnToCheckFromLeft() {
         int lastColumnToCheck = 0;
@@ -918,6 +942,71 @@ public class Main {
 
         return gameOver;
     }
+
+
+    static boolean individualBasicCheckingAlgorithm(int fromVertical, int fromHorizontal, int[][] piece) {
+        boolean canMoveDown = true;
+        // Iterate from 0 to piece.length - 1 - firstNonZeroFromAbove(piece) and check if there is a 1 in the
+        // board in the same position as the piece
+//        int fromBoardVertical = 0;
+        ;
+
+
+        for (int i = firstNonZeroFromAbove(piece); i < piece.length; i++) {
+            int fromBoardHorizontal = fromHorizontal;
+            for (int j = 0; j <= firstNonZeroFromRight(piece); j++) {
+
+                if (board[fromVertical][fromBoardHorizontal] == 1 && piece[i][j] == 1) {
+                    return false;
+                }
+                fromBoardHorizontal++;
+            }
+            fromVertical++;
+        }
+        return canMoveDown;
+    }
+
+    static boolean wholeBoardBasicCheckingAlgorithm2(int[][] piece) {
+        boolean canMoveDown = false;
+        int lastXCoord = 0;
+        int lastYCoord = 0;
+        for (int i = 0; i < board.length - piece.length + 1 + firstNonZeroFromAbove(piece); i++) {
+            for (int j = 0; j < board[i].length - firstNonZeroFromRight(piece); j++) {
+                if (individualBasicCheckingAlgorithm(i, j, piece)) {
+                    canMoveDown = true;
+                    lastYCoord = j;
+                    lastXCoord = i;
+                }
+                ;
+            }
+        }
+        if (canMoveDown) {
+            placePieceOnBigBoardBasicAlgorithm(piece, lastXCoord, lastYCoord);
+        }
+        return canMoveDown;
+    }
+
+    static void placePieceOnBigBoardBasicAlgorithm(int[][] piece, int fromVertical, int fromHorizontal) {
+        int xIterations = firstNonZeroFromAbove(piece);
+        int pieceLength = piece.length - 1 - firstNonZeroFromAbove(piece);
+
+        for (int i = fromVertical; i <= fromVertical + pieceLength; i++) {
+
+            int yIterations = 0;
+            for (int j = fromHorizontal; j < fromHorizontal + firstNonZeroFromRight(piece) + 1; j++) {
+
+                if (board[i][j] == 0 && piece[xIterations][yIterations] == 1) {
+                    board[i][j] += piece[xIterations][yIterations];
+                }
+
+                yIterations++;
+            }
+            xIterations++;
+
+        }
+    }
+
+
 }
 
 
