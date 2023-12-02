@@ -971,7 +971,8 @@ public class Main {
         int lastXCoord = 0;
         int lastYCoord = 0;
         for (int i = 0; i < board.length - piece.length + 1 + firstNonZeroFromAbove(piece); i++) {
-            for (int j = 0; j < board[i].length - firstNonZeroFromRight(piece); j++) {
+            for (int j = board[i].length - firstNonZeroFromRight(piece) - 1; j >= 0; j--) {
+                System.out.println(i + " " + j);
                 if (individualBasicCheckingAlgorithm(i, j, piece)) {
                     canMoveDown = true;
                     lastYCoord = j;
