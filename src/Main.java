@@ -54,15 +54,28 @@ public class Main {
      */
     private static boolean pieceOutOfBounds = false;
 
+    private static int points = 0;
+    private static int piecesPlaced = 0;
+
 
     public static void main(String[] args) {
         // input
         clearConsole();
 
-        System.out.println("Welcome to Tetris");
-        System.out.println("1. Basic branch");
-        System.out.println("2. Advanced branch");
+//        System.out.println("Welcome to Tetris");
+//        System.out.println("1. Basic branch");
+//        System.out.println("2. Advanced branch");
+        // Print welcome to tetris with decorations
+        System.out.println("▄▀▀▀▀▀▀▀▀▀▀  Welcome to TETRIS  ▀▀▀▀▀▀▀▀▀▀▄");
+        // Print options with decorations
+        System.out.println("█                                         █");
+        System.out.println("█     1. Basic branch                     █");
+        System.out.println("█     2. Advanced branch                  █");
+        System.out.println("█                                         █");
+        // Print bottom
+        System.out.println("▀▄▄▄▄▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄▄▄▄▄▄▄▄▀");
         Scanner scanner = new Scanner(System.in);
+        System.out.print("\n\t⤍ Select option: ");
         String input = scanner.nextLine();
         if (input.equals("1")) {
             basicBranch();
@@ -76,17 +89,23 @@ public class Main {
     }
 
     public static void basicBranch() {
-        while (true) {
+        boolean exit = false;
+        while (!exit) {
             generateAndPlacePiece();
             clearConsole();
             checkIfRowIsFull();
+            printPresentation(false, false, false);
             printBoard(stagingBoard);
             printBoard(board);
-            if (checkIfIsGameOver()) {
-                System.out.println("Game over");
-                break;
+            if (checkIfIsGameOver(false)) {
+                clearConsole();
+                printPresentation(true, true, false);
+                printBoard(stagingBoard);
+                printBoard(board);
+                exit = true;
             }
             Scanner scanner = new Scanner(System.in);
+            System.out.print("\n⤍ Press enter to place the piece: ");
             String input = scanner.nextLine();
             // if scanner "" then use basic movement
             if (input.equals("")) {
@@ -96,17 +115,22 @@ public class Main {
     }
 
     public static void advancedBranch() {
-        while (true) {
-            generateAndPlacePiece();
+        boolean exit = false;
+        generateAndPlacePiece();
+        while (!exit) {
             clearConsole();
             updateSpacesLeft();
             updateSpacesRight();
             checkIfRowIsFull();
+            printPresentation(false, false, true);
             printBoard(stagingBoard);
             printBoard(board);
-            if (checkIfIsGameOver()) {
-                System.out.println("Game over");
-                break;
+            if (checkIfIsGameOver(true)) {
+                clearConsole();
+                printPresentation(true, true, true);
+                printBoard(stagingBoard);
+                printBoard(board);
+                exit = true;
             }
             userMovement();
         }
@@ -219,7 +243,7 @@ public class Main {
             // Replace 1 with ◼, and 0 with -
             for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] == 1) {
-                    System.out.print(" ◼ ");
+                    System.out.print(" \u001B[31m◼\u001B[0m ");
                 } else {
                     System.out.print(" - ");
                 }
@@ -270,6 +294,7 @@ public class Main {
      */
     static void userMovement() {
         Scanner scanner = new Scanner(System.in);
+        System.out.print("\n⤍ Select option: ");
         String input = scanner.nextLine();
 
         if (input.equalsIgnoreCase("a") && spaces_left > 0) {
@@ -282,12 +307,15 @@ public class Main {
                 clearBoard(stagingBoard);
                 placePieceBoardBig(board, piece, piece.length - 1 - firstNonZeroFromAbove(piece));
                 clearConsole();
+                printPresentation(false, false, true);
                 printBoard(stagingBoard);
                 printBoard(board);
                 movePieceOnBigBoard();
+                piecesPlaced += 1;
                 generateAndPlacePiece();
             } else {
                 clearConsole();
+                printPresentation(false, true, false);
                 printBoard(stagingBoard);
                 printBoard(board);
                 System.out.println("Can't place piece");
@@ -529,9 +557,11 @@ public class Main {
                 if (board[nextBoardRow][yPosition - firstNonZeroFromRight(piece) + j] == 1 && piece[i][j] == 1) {
 
                     if (i == 2) {
+                        System.out.println("Can't move down");
                         return false;
                     }
                     if (piece[i + 1][j] != 1) {
+                        System.out.println("Can't move down");
                         return false;
                     }
                 }
@@ -600,7 +630,6 @@ public class Main {
             int xIteration = 0;
             for (int i = piece.length - 1; i >= firstNonZeroFromAbove(piece); i--) {
                 if (board[xPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
-                    // I'm not proud of this, but it works
 
                     if (j == 0) {
                         System.out.println("Can't move left");
@@ -627,7 +656,12 @@ public class Main {
     static void movePieceOnBigBoard() {
         if (checkIfPieceCanMoveDown()) {
             // catch input
+            clearConsole();
+            printPresentation(false, false, true);
+            printBoard(stagingBoard);
+            printBoard(board);
             Scanner scanner = new Scanner(System.in);
+            System.out.print("\n⤍ Select option: ");
             String input = scanner.nextLine();
 
             if (input.equalsIgnoreCase("s")) {
@@ -668,9 +702,7 @@ public class Main {
                 xIterations--;
             }
 
-            clearConsole();
-            printBoard(stagingBoard);
-            printBoard(board);
+
             xPosition += 1;
             movePieceOnBigBoard();
         } catch (Exception e) {
@@ -704,15 +736,18 @@ public class Main {
                     xIterations--;
 
                 }
-                clearConsole();
+
                 spaces_left += 1;
                 spaces_right -= 1;
-                printBoard(stagingBoard);
-                printBoard(board);
+
                 yPosition += 1;
                 movePieceOnBigBoard();
             }
+            else{
+                movePieceOnBigBoard();
+            }
         } catch (Exception ignored) {
+            movePieceOnBigBoard();
         }
     }
 
@@ -744,15 +779,17 @@ public class Main {
                     xIterations--;
 
                 }
-                clearConsole();
+
                 spaces_left -= 1;
                 spaces_right += 1;
-                printBoard(stagingBoard);
-                printBoard(board);
                 yPosition -= 1;
                 movePieceOnBigBoard();
             }
+            else{
+                movePieceOnBigBoard();
+            }
         } catch (Exception ignored) {
+            movePieceOnBigBoard();
         }
     }
 
@@ -869,13 +906,13 @@ public class Main {
                 board[i][j] = board[i - 1][j];
             }
         }
+        points += 1;
     }
 
     /**
      * This function is used to check if a row is full. It iterates over the row and checks if there is a 0. If there
      * is, continue iterating. If there isn't, calls clearRowAndDisplace() to clear the row and displace all the rows
      *
-     * @param row Row to be checked
      * @return True if the row is full, false if it isn't
      */
     static void checkIfRowIsFull() {
@@ -928,28 +965,37 @@ public class Main {
      * check for the rotated version of the piece. If the rotated version can be placed, it returns false. If it can't,
      * it will return true and the game will be over
      *
+     * @param complexityFlag If true, it will check for the rotated version of the piece because the game is in
+     *                       advanced mode
      * @return True if the game is over, false if the piece can be placed
      */
-    static boolean checkIfIsGameOver() {
+    static boolean checkIfIsGameOver(boolean complexityFlag) {
         boolean gameOver = true;
         for (int i = 0; i < board[0].length - firstNonZeroFromRight(bundleOfPieces[0]); i++) {
             if (checkIfPieceCanBePlacedOnBigBoard(i, bundleOfPieces[0])) return false;
         }
-        for (int i = 0; i < board[0].length - firstNonZeroFromRight(bundleOfPieces[1]); i++) {
-            if (checkIfPieceCanBePlacedOnBigBoard(i, bundleOfPieces[1])) return false;
+        if (complexityFlag) {
+            for (int i = 0; i < board[0].length - firstNonZeroFromRight(bundleOfPieces[1]); i++) {
+                if (checkIfPieceCanBePlacedOnBigBoard(i, bundleOfPieces[1])) return false;
+            }
         }
 
 
         return gameOver;
     }
 
-
+    /**
+     * Giver a starting point in the board, which is the upper left corner of the piece, this function will check if
+     * the piece can be placed in the board. It will iterate over the piece and check if there is a 1 in the board
+     * in the same position as the piece.
+     *
+     * @param fromVertical   Upper row of the space to be checked
+     * @param fromHorizontal Left column of the space to be checked
+     * @param piece          Piece to be placed in the board
+     * @return True if the piece can be placed, false if it can't
+     */
     static boolean individualBasicCheckingAlgorithm(int fromVertical, int fromHorizontal, int[][] piece) {
         boolean canMoveDown = true;
-        // Iterate from 0 to piece.length - 1 - firstNonZeroFromAbove(piece) and check if there is a 1 in the
-        // board in the same position as the piece
-//        int fromBoardVertical = 0;
-        ;
 
 
         for (int i = firstNonZeroFromAbove(piece); i < piece.length; i++) {
@@ -967,26 +1013,45 @@ public class Main {
         return canMoveDown;
     }
 
-    static boolean wholeBoardBasicCheckingAlgorithm2(int[][] piece) {
-        boolean canMoveDown = false;
+    /**
+     * Iterates over the board from the bottom to the top, from the left to the right. It checks if the piece can be
+     * placed in each position. If it can, it will place the piece in the lowest position possible.
+     *
+     * @param piece Piece to be placed in the board
+     */
+
+    static void wholeBoardBasicCheckingAlgorithm2(int[][] piece) {
+        boolean canBePlaced = false;
+        /*  Each time a piece can be placed, the coordinates are updated. Once the checking method returns false,
+            the piece is placed in the last position where it could be placed
+         */
         int lastXCoord = 0;
         int lastYCoord = 0;
         for (int i = 0; i < board.length - piece.length + 1 + firstNonZeroFromAbove(piece); i++) {
             for (int j = board[i].length - firstNonZeroFromRight(piece) - 1; j >= 0; j--) {
                 if (individualBasicCheckingAlgorithm(i, j, piece) && !checkIfSpaceIsBlocked(i, j)) {
-                    canMoveDown = true;
+                    canBePlaced = true;
                     lastYCoord = j;
                     lastXCoord = i;
                 }
                 ;
             }
         }
-        if (canMoveDown) {
+        if (canBePlaced) {
             placePieceOnBigBoardBasicAlgorithm(piece, lastXCoord, lastYCoord);
+            piecesPlaced += 1;
         }
-        return canMoveDown;
+
     }
 
+    /**
+     * This function is used to place a piece in the board. It iterates over the piece and places each 1 in the
+     * corresponding position in the board.
+     *
+     * @param piece          Piece to be placed in the board
+     * @param fromVertical   Upper row of the space to be checked
+     * @param fromHorizontal Left column of the space to be checked
+     */
     static void placePieceOnBigBoardBasicAlgorithm(int[][] piece, int fromVertical, int fromHorizontal) {
         int xIterations = firstNonZeroFromAbove(piece);
         int pieceLength = piece.length - 1 - firstNonZeroFromAbove(piece);
@@ -1008,18 +1073,18 @@ public class Main {
     }
 
     /**
-     * This function is used to check if a space is blocked. It iterates over the board from the space to the top
-     * and checks if there is a 1 in the board in the same position as the piece
+     * This function is used to check if a space is blocked when the piece were to be lowered. It iterates over the
+     * board from the bottom to the top, from the left to the right. It checks if there is a 1 in the board in the
+     * same column as the piece.
      *
-     * @param fromVertical  Upper row of the space to be checked
-     * @param fromHorizontal    Left column of the space to be checked
-     * @return  True if the space is blocked, false if it isn't
+     * @param fromVertical   Upper row of the space to be checked
+     * @param fromHorizontal Left column of the space to be checked
+     * @return True if the space is blocked, false if it isn't
      */
-    public static boolean checkIfSpaceIsBlocked(int fromVertical, int fromHorizontal){
-        for (int i = fromVertical; i >= 0; i--){
-            System.out.println("i: " + i + " j: " + fromHorizontal);
-            for (int j = fromHorizontal; j <= fromHorizontal + firstNonZeroFromRight(piece); j++){
-                if (board[i][j] == 1){
+    public static boolean checkIfSpaceIsBlocked(int fromVertical, int fromHorizontal) {
+        for (int i = fromVertical; i >= 0; i--) {
+            for (int j = fromHorizontal; j <= fromHorizontal + firstNonZeroFromRight(piece); j++) {
+                if (board[i][j] == 1) {
                     return true;
                 }
             }
@@ -1027,6 +1092,38 @@ public class Main {
         return false;
     }
 
+    private static void printPresentation(boolean gameOverFlag, boolean cantPlacePieceFlag, boolean complexityFlag) {
+        // Make a line banner with the name of the game and some decoratios around
+        System.out.println("▄▀▀▀▀▀▀▀▀▀  TETRIS  ▀▀▀▀▀▀▀▀▀▀▀▄");
+        System.out.println();
+
+        // Print the instructions
+        System.out.println("  Instructions:            \n");
+        if(complexityFlag)
+        {
+            System.out.println("  a: move left             ");
+            System.out.println("  d: move right            ");
+            System.out.println("  s: move down             ");
+            System.out.println("  r: rotate                ");
+        }
+        else{
+            System.out.println("  - Press enter to place a piece             ");
+        }
+        System.out.println();
+        System.out.println("  Points: " + points + "                ");
+        System.out.println("  Pieces placed: " + piecesPlaced + "         ");
+        if (cantPlacePieceFlag) {
+            // Print the game over message in red
+            System.out.println("  \u001B[93mCan't place piece\u001B[0m        ");
+        }
+        if (gameOverFlag) {
+            // Print the game over message in red
+            System.out.println("  \u001B[31mGame Over\u001B[0m                ");
+        }
+        System.out.println();
+        System.out.println("▀▄▄▄▄▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄ ▄▄▄▄▄▄▄▄▄▄▀");
+        System.out.println();
+    }
 
 }
 
