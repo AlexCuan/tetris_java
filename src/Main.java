@@ -17,8 +17,8 @@ public class Main {
      * These variables are used to keep track of the position of the piece in the board. They are updated every time
      * the piece is moved
      */
-    private static int xPosition = 0;
     private static int yPosition = 0;
+    private static int xPosition = 0;
     //TODO: update spaces_right everytime a piece is placed in the board
 
     /**
@@ -318,7 +318,6 @@ public class Main {
                 printPresentation(false, true, false);
                 printBoard(stagingBoard);
                 printBoard(board);
-                System.out.println("Can't place piece");
                 userMovement();
             }
 
@@ -503,8 +502,8 @@ public class Main {
      * @param y Column
      */
     static void setCoords(int x, int y) {
-        xPosition = x;
-        yPosition = y;
+        yPosition = x;
+        xPosition = y;
 
     }
 
@@ -550,11 +549,11 @@ public class Main {
 
         for (int j = 0; j < firstNonZeroFromRight(piece) + 1; j++) {
 
-            int nextBoardRow = xPosition + 1;
+            int nextBoardRow = yPosition + 1;
 
             for (int i = piece.length - 1; i >= lastRowToCheckFromBottom(); i--) {
 
-                if (board[nextBoardRow][yPosition - firstNonZeroFromRight(piece) + j] == 1 && piece[i][j] == 1) {
+                if (board[nextBoardRow][xPosition - firstNonZeroFromRight(piece) + j] == 1 && piece[i][j] == 1) {
 
                     if (i == 2) {
                         System.out.println("Can't move down");
@@ -585,7 +584,7 @@ public class Main {
     static boolean checkIfPieceCanMoveRight() {
 
         boolean canMoveRight = true;
-        int nextBoardColumn = yPosition + 1;
+        int nextBoardColumn = xPosition + 1;
 
 
         for (int j = firstNonZeroFromRight(piece); j >= lastColumnToCheckFromRight(); j--) {
@@ -594,7 +593,7 @@ public class Main {
 
 
             for (int i = piece.length - 1; i >= firstNonZeroFromAbove(piece); i--) {
-                if (board[xPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
+                if (board[yPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
 
                     if (j == 2) {
                         return false;
@@ -629,7 +628,7 @@ public class Main {
         for (int j = 0; j < lastColumnToCheckFromLeft() + 1; j++) {
             int xIteration = 0;
             for (int i = piece.length - 1; i >= firstNonZeroFromAbove(piece); i--) {
-                if (board[xPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
+                if (board[yPosition - xIteration][nextBoardColumn] == 1 && piece[i][j] == 1) {
 
                     if (j == 0) {
                         System.out.println("Can't move left");
@@ -684,7 +683,7 @@ public class Main {
      */
     static void movePieceDown() {
         try {
-            int nextRow = xPosition + 1;
+            int nextRow = yPosition + 1;
             int xIterations = piece.length - 1;
             for (int i = nextRow; i >= nextRow - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
                 int yIterations = 0;
@@ -703,7 +702,7 @@ public class Main {
             }
 
 
-            xPosition += 1;
+            yPosition += 1;
             movePieceOnBigBoard();
         } catch (Exception e) {
             System.out.println("End reached");
@@ -721,8 +720,8 @@ public class Main {
                 // catch input
 
                 int xIterations = piece.length - 1;
-                int nextColumn = yPosition + 1;
-                for (int i = xPosition; i >= xPosition - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
+                int nextColumn = xPosition + 1;
+                for (int i = yPosition; i >= yPosition - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
                     int yIterations = firstNonZeroFromRight(piece);
                     for (int j = nextColumn; j >= nextColumn - firstNonZeroFromRight(piece); j--) {
                         if (board[i][j] == 0 && piece[xIterations][yIterations] == 1) {
@@ -740,7 +739,7 @@ public class Main {
                 spaces_left += 1;
                 spaces_right -= 1;
 
-                yPosition += 1;
+                xPosition += 1;
                 movePieceOnBigBoard();
             }
             else{
@@ -764,7 +763,7 @@ public class Main {
 
                 int xIterations = piece.length - 1;
                 int nextColumn = spaces_left - 1;
-                for (int i = xPosition; i >= xPosition - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
+                for (int i = yPosition; i >= yPosition - piece.length + firstNonZeroFromAbove(piece) + 1; i--) {
                     int yIterations = 0;
                     System.out.println(firstNonZeroFromRight(piece));
                     for (int j = nextColumn; j <= nextColumn + firstNonZeroFromRight(piece); j++) {
@@ -782,7 +781,7 @@ public class Main {
 
                 spaces_left -= 1;
                 spaces_right += 1;
-                yPosition -= 1;
+                xPosition -= 1;
                 movePieceOnBigBoard();
             }
             else{
