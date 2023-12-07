@@ -75,7 +75,7 @@ public class Main {
         // Print bottom
         System.out.println("▀▄▄▄▄▄▄▄▄▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄ ▄▄▄▄▄▄▄▄▄▀");
         Scanner scanner = new Scanner(System.in);
-        System.out.print("\n\t⤍ Select option: ");
+        System.out.print("\n\t→ Select option: ");
         String input = scanner.nextLine();
         if (input.equals("1")) {
             basicBranch();
@@ -105,7 +105,7 @@ public class Main {
                 exit = true;
             }
             Scanner scanner = new Scanner(System.in);
-            System.out.print("\n⤍ Press enter to place the piece: ");
+            System.out.print("\n→ Press enter to place the piece: ");
             String input = scanner.nextLine();
             // if scanner "" then use basic movement
             if (input.equals("")) {
@@ -243,7 +243,7 @@ public class Main {
             // Replace 1 with ◼, and 0 with -
             for (int j = 0; j < board[i].length; j++) {
                 if (board[i][j] == 1) {
-                    System.out.print(" \u001B[31m◼\u001B[0m ");
+                    System.out.print(" \u001B[31m■\u001B[0m ");
                 } else {
                     System.out.print(" - ");
                 }
@@ -294,7 +294,7 @@ public class Main {
      */
     static void userMovement() {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("\n⤍ Select option: ");
+        System.out.print("\n→ Select option: ");
         String input = scanner.nextLine();
 
         if (input.equalsIgnoreCase("a") && spaces_left > 0) {
@@ -1106,7 +1106,7 @@ public class Main {
             System.out.println("  r: rotate                ");
         }
         else{
-            System.out.println("  - Press enter to place a piece             ");
+            System.out.println("  → Press enter to place a piece             ");
         }
         System.out.println();
         System.out.println("  Points: " + points + "                ");
