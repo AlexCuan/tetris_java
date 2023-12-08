@@ -314,7 +314,7 @@ public class Main {
                 generateAndPlacePiece();
             } else {
                 clearConsole();
-                printPresentation(false, true, false);
+                printPresentation(false, true, true);
                 printBoard(stagingBoard);
                 printBoard(board);
                 userMovement();
