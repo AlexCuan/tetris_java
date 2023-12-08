@@ -589,7 +589,7 @@ public class Main {
             printBoard(stagingBoard);
             printBoard(board);
             Scanner scanner = new Scanner(System.in);
-            System.out.print("\n⤍ Select option: ");
+            System.out.print("\n-> Select option: ");
             String input = scanner.nextLine();
 
             if (input.equalsIgnoreCase("s")) {
