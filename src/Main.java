@@ -19,7 +19,6 @@ public class Main {
      */
     private static int yPosition = 0;
     private static int xPosition = 0;
-    //TODO: update spaces_right everytime a piece is placed in the board
 
     /**
      * This variable is used to keep track of the state of the piece. If it's rotated or not
@@ -329,11 +328,7 @@ public class Main {
                 readjustPiece();
             }
         }
-        // TODO: remove this function
-        else if (input.equalsIgnoreCase("q")) {
-            placePieceBoardBig(board, piece, Arrays.stream(countSpacesDown()).min().getAsInt() - 1);
-            generateAndPlacePiece();
-        }
+
     }
 
     /**
@@ -429,44 +424,7 @@ public class Main {
         return counter;
     }
 
-    // TODO: remove this function
-    static int[] countSpacesDown() {
-        int[] spacesDown = new int[firstNonZeroFromRight(piece) + 1];
-        for (int j = spaces_left; j < spacesDown.length + spaces_left; j++) {
 
-            for (int i = 0; i < board.length; i++) {
-
-                if (board[i][j] == 0) {
-                    spacesDown[j - spaces_left] += 1;
-                }
-                if (board[i][j] == 1) {
-                    break;
-                }
-            }
-        }
-        return spacesDown;
-    }
-
-    //TODO: remove this function
-    static int pieceSpacesDown() {
-        // In the real world, this function is anecdotal if you don't want to add an extra piece
-        // But if you want to add an extra piece, this function is crucial to know how many spaces
-        // the piece can go down
-
-        int minSpaceDown = 0;
-        boolean stop = false;
-        for (int i = piece.length - 1; i >= 0; i--) {
-            for (int j = 0; j < piece[0].length; j++) {
-                if (piece[i][j] == 1 && piece.length - i + 1 <= minSpaceDown) {
-                    minSpaceDown += piece.length - i + 1;
-                } else {
-                    stop = true;
-                    break;
-                }
-            }
-        }
-        return minSpaceDown;
-    }
 
     /**
      * This function is used to place the piece in the main board. It iterates over the piece and places it in the
@@ -476,7 +434,6 @@ public class Main {
      * @param piece Piece to be placed in the board
      * @param from  Row where the piece is going to be placed
      */
-    //TODO refactor this function so we can set arbitrary spaces left
     static void placePieceBoardBig(int[][] board, int[][] piece, int from) {
         int xIterations = firstNonZeroFromAbove(piece);
         int pieceLength = piece.length - 1 - firstNonZeroFromAbove(piece);
@@ -505,34 +462,6 @@ public class Main {
         yPosition = x;
         xPosition = y;
 
-    }
-
-    // TODO: remove this function
-    static int[] onesPosition(int row) {
-        // Iterate over the bottom row of the piece and save the position of the 1s
-        // from left to right
-        int[] onesPosition = new int[firstNonZeroFromRight(piece) + 1];
-        for (int i = 0; i < onesPosition.length; i++) {
-            if (piece[row][i] == 1) {
-                onesPosition[i] = 1;
-            }
-        }
-        return onesPosition;
-    }
-
-
-    // TODO: remove this function
-    static int[] onesPositionAtTheRight() {
-        // Iterate over the right column of the piece and save the position of the 1s
-        // from top to bottom
-        int[] onesPosition = new int[piece.length];
-        int lastColumn = firstNonZeroFromRight(piece);
-        for (int i = 0; i < onesPosition.length; i++) {
-            if (piece[i][lastColumn] == 1) {
-                onesPosition[i] = 1;
-            }
-        }
-        return onesPosition;
     }
 
     /**
